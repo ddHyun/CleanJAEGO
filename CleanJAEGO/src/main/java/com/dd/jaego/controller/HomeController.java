@@ -1,4 +1,4 @@
-package com.dd.jaego;
+package com.dd.jaego.controller;
 
 import java.text.DateFormat;
 import java.util.Date;
