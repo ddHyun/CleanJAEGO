@@ -2,16 +2,17 @@ package com.dd.jaego.mapper;
 
 import java.util.List;
 
-//import org.apache.ibatis.annotations.Mapper;
-//import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import com.dd.jaego.vo.DeptVO;
+import com.dd.jaego.vo.UserVO;
 
-//@Mapper
+@Mapper
 public interface MainMapper {
 	
 	public List<DeptVO> deptList(); 
-	
-//	@Select("SELECT * FROM DEPT")
-	public List<DeptVO> dept();
+
+	@Select("select * from jguser")
+	public UserVO showUserList();
 }
