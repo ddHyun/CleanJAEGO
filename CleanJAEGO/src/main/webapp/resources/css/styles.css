@@ -2184,7 +2184,7 @@ progress {
 .form-text {
   margin-top: 0.25rem;
   font-size: 0.875em;
-  color: #6c757d;
+  color: #ff0000;
 }
 
 .form-control {
@@ -7773,7 +7773,7 @@ textarea.form-control-lg {
 
 .text-muted {
   --bs-text-opacity: 1;
-  color: #6c757d !important;
+  color: #ff0000!important;
 }
 
 .text-black-50 {
@@ -11287,4 +11287,5 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important;
   }
+
 }
