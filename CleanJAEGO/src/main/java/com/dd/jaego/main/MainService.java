@@ -1,5 +1,7 @@
 package com.dd.jaego.main;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +15,14 @@ public class MainService {
 	MainMapper mainMapper;
 
 	//회원목록 가져오기
-	public UserVO showUserList() {
-		UserVO uVO = mainMapper.showUserList();
-		return uVO;
+	public ArrayList<UserVO> showUserList() {
+		ArrayList<UserVO> userList = mainMapper.showUserList();
+		return userList;
+	}
+
+	//회원목록 추가하기
+	public int insertUser(UserVO vo) {
+		return mainMapper.insertUser(vo);
 	}
 
 }

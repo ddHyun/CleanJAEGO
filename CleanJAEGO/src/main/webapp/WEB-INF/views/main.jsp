@@ -43,6 +43,10 @@
                         	<i class="bi bi-box-arrow-in-right"></i>
                             	로그인
                         </button>
+                        <button class="btn btn-outline-dark" type="button" id="navLogoutBtn">
+                        	<i class="bi bi-box-arrow-left"></i>
+                            	로그아웃
+                        </button>
                     </form>
                 </div>
             </div>
@@ -63,7 +67,8 @@
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+<!--                             <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." /> -->
+                            <img class="card-img-top" src="resources/assets/noImage.png" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -84,7 +89,8 @@
                             <!-- Sale badge-->
                             <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
                             <!-- Product image-->
-                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <img class="card-img-top" src="resources/assets/noImage2.jpg" alt="..." 
+                            	style="width:100%; height:100%"/>
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -272,9 +278,22 @@
 
 <script>
 	$(document).ready(function(){
-		$('#navLoginBtn').click(function(){
-			location.href = 'login';
-		})
+		let sessionEmail = "${sessionScope.sessionEmail}";
+		if(sessionEmail == '' || sessionEmail == 'none'){
+			$('#navLogoutBtn').hide();
+		}else{
+			$('#navLoginBtn').hide();
+		}		
+	});
+	
+	//로그인페이지로 이동
+	$('#navLoginBtn').click(function(){
+		location.href = 'login';
+	});
+	
+	//로그아웃
+	$('#navLogoutBtn').click(function(){		
+		location.href = 'logout';
 	});
 </script>
 </html>

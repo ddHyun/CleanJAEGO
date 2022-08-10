@@ -9,10 +9,10 @@
 	</settings>
 	
 	<typeAliases>		
-		<typeAlias type="com.dd.jaego.vo.UserVO" alias="ueptVO"/>				
+		<typeAlias type="com.dd.jaego.vo.UserVO" alias="userVO"/>				
 		<typeAlias type="com.dd.jaego.vo.ItemVO" alias="itemVO"/>				
 	</typeAliases>
- 	<mappers>
+ 	<!-- <mappers>
 		<mapper resource="config/mybatis/mapper/MainMapper.xml" />		
-	</mappers>
+	</mappers> -->
 </configuration>

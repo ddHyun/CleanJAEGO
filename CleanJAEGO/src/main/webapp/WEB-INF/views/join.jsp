@@ -40,7 +40,7 @@
                         </li>
                     </ul>
                     <form class="d-flex">
-                        <button class="btn btn-outline-dark" type="button"  onclick="location.href='login'">
+                        <button class="btn btn-outline-dark" type="button" onclick="location.href='login'">
                         	<i class="bi bi-box-arrow-in-right"></i>
                             	로그인
                         </button>
@@ -70,7 +70,12 @@
 			    <div class="form-pwd">
 			      <label for="inputPassword1" class="form-label mt-4">비밀번호</label>
 			      <input type="password" class="form-control" id="inputPassword1" placeholder="Password">
-			      <small id="pwdHelp" class="form-text text-muted"></small>
+			      <small id="pwdHelp" class="form-text text-muted" style="color:red;"></small>
+			    </div> 
+			    <div class="form-pwd">
+			      <label for="inputPassword2" class="form-label mt-4">비밀번호 확인</label>
+			      <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+			      <small id="pwdHelp2" class="form-text text-muted" style="color:red;"></small>
 			    </div> 
 			    <div class="form-pwd">
 			      <label class="form-label mt-4"></label>
@@ -78,11 +83,8 @@
 			  </fieldset>
 			</form>
 		    <form class="form-btn"> 
-		    	<button type="button" class="btn btn-outline-dark" id="loginBtn">로그인</button>
-		    	<a href="join" style="margin-left:10px">회원가입하기</a>
-		    </form>
-		    <form style="margin-bottom:75px">
-		    </form>
+		    	<button type="button" class="btn btn-outline-dark" id="joinBtn">회원가입</button>
+		    </form>		    
 			</div>
 
         </section>
@@ -99,79 +101,124 @@
 
 <script>
 	$(document).ready(function(){
-			
-		$('#loginBtn').click(function(){
-			let email = $('#inputEmail1');
-			let pwd = $('#inputPassword1');
-			let emailHelp = $('#emailHelp');
-			let pwdHelp = $('#pwdHelp');
-			let emailVal = $.trim(email.val());
-			let pwdVal = $.trim(pwd.val());
-			let emailPattern = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-			let pwdPattern = /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/;
+		$('#inputEmail1').focus();
+	});		
+	
+	//회원가입
+	$('#joinBtn').click(function(){
+		let email = $('#inputEmail1');
+		let pwd = $('#inputPassword1');
+		let pwd2 = $('#inputPassword2');
+		let emailHelp = $('#emailHelp');
+		let pwdHelp = $('#pwdHelp');
+		let pwdHelp2 = $('#pwdHelp2');
+		let emailVal = $.trim(email.val());
+		let pwdVal = $.trim(pwd.val());
+		let pwdVal2 = $.trim(pwd2.val());
+		let emailPattern = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+		let pwdPattern = /^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\(\\)\-_=+]).{8,16}$/;
+		let check = false;
 		
-			email.on('keypress', function(){
-				emailHelp.css('display', 'none');
-			});
-			
-			//유효성
-			if(emailVal==''){
-				emailHelp.html('이메일을 입력해주세요');				
+		email.on('keyup paste', function(){
+			emailHelp.css('display', 'none');
+		});		
+		
+		//유효성
+		if(emailVal==''){
+			emailHelp.html('이메일을 입력해주세요');				
+			email.focus();
+			check = false;
+			return false;
+		}
+		if(!emailPattern.test(emailVal)){
+			emailHelp.css('display', 'block');
+			emailHelp.html('이메일 형식이 올바르지 않습니다');
+			email.val("");
+			email.focus();
+			check = false;
+			return false;
+		}else{
+			check = true;
+			console.log('email format ok / check: '+check);
+		}
+		
+		pwd.on('keypress', function(){
+			pwdHelp.css('display', 'none');
+		});
+		
+		if(pwdVal==''){
+			pwdHelp.html('비밀번호를 입력해주세요');
+			pwd.focus();
+			check = false;
+			return false;
+		}			
+		/* if(!pwdPattern.test(pwdVal)){
+			pwdHelp.css('display', 'block');
+			pwdHelp.html('특수문자를 포함한 8~16자리의 숫자, 영문만 입력이 가능합니다');
+			pwd.val("");
+			pwd.focus();
+			check = false;
+			return false;
+		} */
+		
+		pwd2.on('keyup', function(){
+			pwdHelp2.css('display', 'none');
+		});
+		
+		if(pwdVal != pwdVal2){
+			pwdHelp2.html('비밀번호가 일치하지 않습니다');
+			pwd2.val('');
+			pwd2.focus();
+			check = false;
+			return false;
+		}else{
+			check = true;
+			console.log('pwd correct/ check: '+check);
+		}
+		
+		//이메일 중복여부
+		$.ajax({
+			url:"checkEmail",
+			data:{email:emailVal},
+			datatype:"json",
+			type:"POST",
+			async:false
+		}).done(function(data){
+			let json = (new Function('return'+data))();
+			if(json[0].count=='1'){
+				emailHelp.html('이미 사용중인 이메일입니다. 다른 이메일로 시도해주세요');
+				email.val('');
 				email.focus();
-				return false;
+				check = false;
+				console.log('email 중복됨/ check: '+check);
+			}else if(json[0].count=='0'){
+				check = true;
+				console.log('email 사용가능/ check: '+check);
 			}
-			if(!emailPattern.test(emailVal)){
-				emailHelp.css('display', 'block');
-				emailHelp.html('이메일 형식이 올바르지 않습니다');
-				email.val("");
-				email.focus();
-				return false;
-			}
-			
-			pwd.on('keypress', function(){
-				pwdHelp.css('display', 'none');
-			});
-			
-			if(pwdVal==''){
-				pwdHelp.html('비밀번호를 입력해주세요');
-				pwd.focus();
-				return false;
-			}			
-			/* if(!pwdPattern.test(pwdVal)){
-				pwdHelp.css('display', 'block');
-				pwdHelp.html('특수문자를 포함한 8~16자리의 숫자, 영문만 입력이 가능합니다');
-				pwd.val("");
-				pwd.focus();
-				return false;
-			} */
-			
-			$.ajax({
-				url:"checkLogin",
-				type:"post",
+		}).fail(function(){
+			alert('email check fail');
+		});		
+		
+		if(check){
+			 $.ajax({
+				url: "checkJoin",
+				data:{email:emailVal, pwd:pwdVal},
 				datatype:"json",
-				data:{email:emailVal, pwd:pwdVal}
+				type:"POST",
+				async:false
 			}).done(function(data){
 				let json = (new Function('return'+data))();
-				if(json[0].count=='1'){
-					alert('비밀번호가 일치하지 않습니다');
-					pwd.val('');
-					pwd.focus();
-					return false;
-				}else if(json[0].count=='2'){
-					alert('환영합니다~!');
-					location.href = 'main';
-				}else if(json[0].count=='0'){
-					alert('일치하는 정보가 없습니다');
-				email.val('');
-				pwd.val('');
-				email.focus();
-				return false;
+				if(json[0].res=='1'){
+				alert('회원가입 성공!');
+				location.href= 'login';					
+				}else if(json[0].res=='0'){
+					alert('관리자에게 문의하세요');
 				}
 			}).fail(function(){
-				alert('알 수 없는 오류가 발생했습니다. 관리자에게 문의하세요');
-				return false;
-			});//ajax			
-		});
-	});
+				alert('join fail');
+			});			
+		}		
+	});//회원가입버튼	
+
 </script>
 </html>
