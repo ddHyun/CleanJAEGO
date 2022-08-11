@@ -158,7 +158,6 @@
 					pwd.focus();
 					return false;
 				}else if(json[0].count=='2'){
-					alert('환영합니다~!');
 					location.href = 'main';
 				}else if(json[0].count=='0'){
 					alert('일치하는 정보가 없습니다');

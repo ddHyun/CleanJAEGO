@@ -4,11 +4,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dd.jaego.mapper.MainMapper">
 	
+	<!-- 회원추가하기 -->
 	<insert id="insertUser" parameterType="userVO">		
 		insert into jguser values(
 				#{email},
 				#{pwd}
-		)
-		
+		)		
 	</insert>
+	
+	<!-- 해당아이디에 저장된 목록유무 확인 -->
+	<!-- <select id="checkItemList" resultType="int" parameterType="String">
+		SELECT NVL(COUNT(IDX), 0) AS result FROM JGITEM WHERE EMAIL = #{email}
+	</select>
+	
+	재고전체목록 가져오기
+	<select id="showItemList" resultType="ArrayList" parameterType="String">
+		select * from jgitem where email=#{email}
+	</select> -->
 </mapper>

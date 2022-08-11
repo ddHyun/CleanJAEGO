@@ -12,6 +12,18 @@ public class ItemVO {
 	
 	public ItemVO() {}
 	
+	
+	
+	public ItemVO(String item_name, int stock, String manufacture_date, String expiry_date, String filename) {
+		this.stock = stock;
+		this.item_name = item_name;
+		this.manufacture_date = manufacture_date;
+		this.expiry_date = expiry_date;
+		this.filename = filename;
+	}
+
+
+
 	public int getIdx() {
 		return idx;
 	}

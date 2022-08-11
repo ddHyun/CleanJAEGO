@@ -144,6 +144,10 @@ h4, .h4 {
   h4, .h4 {
     font-size: 1.5rem;
   }
+  img{
+  	height: 178.66px; !important
+  	object-fit: cover;
+  }
 }
 
 h5, .h5 {
@@ -646,10 +650,18 @@ progress {
   .container-sm, .container {
     max-width: 540px;
   }
+  img{
+  	height: 154.66px;
+  	object-fit: cover;
+  }
 }
 @media (min-width: 768px) {
   .container-md, .container-sm, .container {
     max-width: 720px;
+  }
+   img{
+  	height: 137.33px;
+  	object-fit: cover;
   }
 }
 @media (min-width: 992px) {

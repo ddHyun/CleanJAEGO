@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dd.jaego.main.ItemService;
 import com.dd.jaego.main.MainService;
+import com.dd.jaego.vo.ItemVO;
 import com.dd.jaego.vo.UserVO;
 
 @Controller
@@ -23,16 +25,40 @@ public class MainController {
 	MainService mainService;
 	
 	@Autowired
+	ItemService itemService;
+	
+	@Autowired
 	HttpSession session;
 	
 	ArrayList<UserVO> userList;
+	ArrayList<ItemVO> itemList;
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
+	//메인페이지로 이동
 	@RequestMapping(value= {"/", "/main"})
 	public String mainPage(Model model) {
-//		ArrayList<UserVO> list = new ArrayList<UserVO>();
-//		UserVO uVO = mainService.showUserList();
-//		model.addAttribute("vo", uVO);
+		itemList = new ArrayList<ItemVO>();
+		//DB에 해당이메일의 재고목록 유무 확인
+		String result = checkItemIdx();
+		if(result.equals("0")) {//이메일O 목록X
+			System.out.println("이메일O 목록X");
+			ItemVO itemVO = new ItemVO("제품명", 0, "-", "-", "noImage.png");
+			itemList.add(itemVO);
+		}else if(result.equals("noSession")) {//로그인 안된 상태
+			System.out.println("로그인 안된 상태");
+			ItemVO itemVO1 = new ItemVO("골든커리", 4, "-", "2022-09-15", "curry.jpg");
+			ItemVO itemVO2 = new ItemVO("콘통조림", 5, "-", "2024-05-30", "corn.png");
+			ItemVO itemVO3 = new ItemVO("파스타/푸실리", 1, "-", "2022-08-30", "pasta.jpg");
+			ItemVO itemVO4 = new ItemVO("부침가루", 2, "-", "2022-12-28", "flour.jpg");
+			itemList.add(itemVO1);
+			itemList.add(itemVO2);
+			itemList.add(itemVO3);
+			itemList.add(itemVO4);
+		}else {//이메일O 목록O
+			itemList = showitemList();			
+		}
+		model.addAttribute("itemList", itemList);
+		model.addAttribute("dbResult", result);
 		logger.info("==========mainPage==========");
 		return "main";
 	}
@@ -44,11 +70,11 @@ public class MainController {
 		return "login";
 	}
 	
-	//로그아웃(메인페이지로 이동)
+	//로그아웃(로그인페이지로 이동)
 	@RequestMapping("/logout")
 	public String logout() {
 		session.invalidate();
-		return "main";
+		return "login";
 	}
 	
 	//회원가입 페이지로 이동
@@ -59,12 +85,37 @@ public class MainController {
 	}
 	
 	//전체회원목록 가져오기
-	public ArrayList<UserVO> showList(){
+	public ArrayList<UserVO> showuserList(){
 		userList = new ArrayList<UserVO>();
 		//DB에서 회원목록 가져오기
 		userList = mainService.showUserList();
 		
 		return userList;
+	}
+	
+	//DB에 해당아이디에 저장된 목록 유무 확인(0: 목록없음 / 1>: 목록 있음)
+	public String checkItemIdx() {
+		String email = (String)session.getAttribute("sessionEmail");
+		String result = "";
+		
+		if(email!=null) {
+			int resultNum = itemService.checkItemList(email);
+			result = ""+resultNum;
+			System.out.println(email+" DB재고목록 : "+resultNum);
+		}else {
+			result = "noSession";
+			System.out.println("재고목록유무확인 : "+result);
+		}
+		
+		return result;
+	}
+	
+	//전체재고목록 가져오기
+	public ArrayList<ItemVO> showitemList(){
+		String email = (String)session.getAttribute("sessionEmail");
+		itemList = itemService.showItemList(email);			
+
+		return itemList;
 	}
 	
 	//로그인하기
@@ -73,7 +124,7 @@ public class MainController {
 	@RequestMapping(value="/checkLogin", method=RequestMethod.POST)
 	public String login(UserVO vo) {
 		
-		userList = showList();
+		userList = showuserList();
 		
 		String email = vo.getEmail();
 		String pwd = vo.getPwd();
@@ -102,7 +153,7 @@ public class MainController {
 	@RequestMapping(value="/checkEmail", method=RequestMethod.POST)
 	public String checkEmail(String email) {
 		//전체목록
-		userList = showList();
+		userList = showuserList();
 		int count = 0;
 		
 		for (int i = 0; i < userList.size(); i++) {

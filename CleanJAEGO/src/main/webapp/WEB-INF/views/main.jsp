@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 
@@ -17,6 +18,32 @@
 <!-- Core theme CSS (includes Bootstrap)-->
 <link href="resources/css/styles.css" rel="stylesheet" />
 </head>
+<style>
+@media (min-width: 576px) {
+  img{
+  	height: 154.66px;
+  	object-fit: contain;
+  }
+}
+@media (min-width: 768px) {
+   img{
+  	height: 137.33px;
+  	object-fit: contain;
+  }
+}
+  @media (min-width: 992px) {
+ img{
+  	height: 178.66px;
+  	object-fit: contain;
+  }
+}
+  @media (min-width: 1200px) {
+ img{
+  	height: 178.66px;
+  	object-fit: contain;
+  }
+}
+</style>
 
 <body>
         <!-- Navigation-->
@@ -43,7 +70,7 @@
                         	<i class="bi bi-box-arrow-in-right"></i>
                             	로그인
                         </button>
-                        <button class="btn btn-outline-dark" type="button" id="navLogoutBtn">
+                        <button class="btn btn-outline-dark" type="button" id="navLogoutBtn" onclick="location.href='logout'">
                         	<i class="bi bi-box-arrow-left"></i>
                             	로그아웃
                         </button>
@@ -64,39 +91,107 @@
         <section class="py-5" style="background-color:#cfffe5">
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                
+		<!----------------------------------- 로그인 되어있으면서 저장된 재고목록도 있는 경우 ----------------------------------->
+           		  <c:if test="${sessionEmail ne null && dbResult ne '0' && dbResult ne 'noSession' }">
+                  <c:forEach var="item" items="${itemList }">
                     <div class="col mb-5">
                         <div class="card h-100">
+                        	<c:if test="${item.stock le 1 }">
+                        		<div class="badge bg-dark text-white position-absolute" style="top: 12.8rem; right: 0.5rem">임박!!</div>
+                        	</c:if>
                             <!-- Product image-->
-<!--                             <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." /> -->
                             <img class="card-img-top" src="resources/assets/noImage.png" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <h5 class="fw-bolder">Fancy Product</h5>
-                                    <!-- Product price-->
-                                    $40.00 - $80.00
+                                    <h5 class="fw-bolder">${item.item_name}</h5>
+                                    <!-- Stock -->
+                                    	총재고 : ${item.stock }개<br>
+                                    <!-- Manufacture date -->
+                                    	제조일자 : ${item.manufacture_date }<br>
+                                    <!-- Expiry date -->
+                                    	유통기한 : ${item.expiry_date }
                                 </div>
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">수정하기</a></div>
                             </div>
                         </div>
                     </div>
+                   </c:forEach>
+                   </c:if>
+                   
+		<!----------------------------------- 로그인 상태가 아닌 경우/기본화면 ----------------------------------->                 
+                   <c:if test="${sessionEmail eq null}">
+                   <c:forEach var="item" items="${itemList }">
                     <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Sale badge-->
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <div class="card h-100">                        
                             <!-- Product image-->
-                            <img class="card-img-top" src="resources/assets/noImage2.jpg" alt="..." 
-                            	style="width:100%; height:100%"/>
+                            <img class="card-img-top" src="resources/assets/${item.filename }" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
+                                    <h5 class="fw-bolder">${item.item_name}</h5>
+                                    <!-- Stock -->
+                                    	총재고 : ${item.stock }개<br>
+                                    <!-- Manufacture date -->
+                                    	제조일자 : ${item.manufacture_date }<br>
+                                    <!-- Expiry date -->
+                                    	유통기한 : ${item.expiry_date }
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">수정하기</a></div>
+                            </div>
+                        </div>
+                    </div>
+                   </c:forEach>
+                   </c:if>
+		<!----------------------------------- 로그인은 되어있지만 저장된 재고목록이 없는 경우 ----------------------------------->                   
+                   <c:if test="${sessionEmail ne null && dbResult eq '0'}">
+                   <c:forEach var="item" items="${itemList }">
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="resources/assets/${item.filename }" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">${item.item_name}</h5>
+                                    <!-- Stock -->
+                                    	총재고 : ${item.stock }개<br>
+                                    <!-- Manufacture date -->
+                                    	제조일자 : ${item.manufacture_date }<br>
+                                    <!-- Expiry date -->
+                                    	유통기한 : ${item.expiry_date }
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">등록하기</a></div>
+                            </div>
+                        </div>
+                    </div>
+                   </c:forEach>
+                   </c:if>
+                    <!-- <div class="col mb-5">
+                        <div class="card h-100">
+                            Sale badge
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            Product image
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..."/>
+                            Product details
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    Product name
                                     <h5 class="fw-bolder">Special Item</h5>
-                                    <!-- Product reviews-->
+                                    Product reviews
                                     <div class="d-flex justify-content-center small text-warning mb-2">
                                         <div class="bi-star-fill"></div>
                                         <div class="bi-star-fill"></div>
@@ -104,12 +199,12 @@
                                         <div class="bi-star-fill"></div>
                                         <div class="bi-star-fill"></div>
                                     </div>
-                                    <!-- Product price-->
+                                    Product price
                                     <span class="text-muted text-decoration-line-through">$20.00</span>
                                     $18.00
                                 </div>
                             </div>
-                            <!-- Product actions-->
+                            Product actions
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
                             </div>
@@ -117,21 +212,21 @@
                     </div>
                     <div class="col mb-5">
                         <div class="card h-100">
-                            <!-- Sale badge-->
+                            Sale badge
                             <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
-                            <!-- Product image-->
+                            Product image
                             <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                            <!-- Product details-->
+                            Product details
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
+                                    Product name
                                     <h5 class="fw-bolder">Sale Item</h5>
-                                    <!-- Product price-->
+                                    Product price
                                     <span class="text-muted text-decoration-line-through">$50.00</span>
                                     $25.00
                                 </div>
                             </div>
-                            <!-- Product actions-->
+                            Product actions
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
                             </div>
@@ -139,14 +234,14 @@
                     </div>
                     <div class="col mb-5">
                         <div class="card h-100">
-                            <!-- Product image-->
+                            Product image
                             <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                            <!-- Product details-->
+                            Product details
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
+                                    Product name
                                     <h5 class="fw-bolder">Popular Item</h5>
-                                    <!-- Product reviews-->
+                                    Product reviews
                                     <div class="d-flex justify-content-center small text-warning mb-2">
                                         <div class="bi-star-fill"></div>
                                         <div class="bi-star-fill"></div>
@@ -154,11 +249,11 @@
                                         <div class="bi-star-fill"></div>
                                         <div class="bi-star-fill"></div>
                                     </div>
-                                    <!-- Product price-->
+                                    Product price
                                     $40.00
                                 </div>
                             </div>
-                            <!-- Product actions-->
+                            Product actions
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
                             </div>
@@ -166,21 +261,21 @@
                     </div>
                     <div class="col mb-5">
                         <div class="card h-100">
-                            <!-- Sale badge-->
+                            Sale badge
                             <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
-                            <!-- Product image-->
+                            Product image
                             <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                            <!-- Product details-->
+                            Product details
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
+                                    Product name
                                     <h5 class="fw-bolder">Sale Item</h5>
-                                    <!-- Product price-->
+                                    Product price
                                     <span class="text-muted text-decoration-line-through">$50.00</span>
                                     $25.00
                                 </div>
                             </div>
-                            <!-- Product actions-->
+                            Product actions
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
                             </div>
@@ -188,18 +283,18 @@
                     </div>
                     <div class="col mb-5">
                         <div class="card h-100">
-                            <!-- Product image-->
+                            Product image
                             <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                            <!-- Product details-->
+                            Product details
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
+                                    Product name
                                     <h5 class="fw-bolder">Fancy Product</h5>
-                                    <!-- Product price-->
+                                    Product price
                                     $120.00 - $280.00
                                 </div>
                             </div>
-                            <!-- Product actions-->
+                            Product actions
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
                             </div>
@@ -207,16 +302,16 @@
                     </div>
                     <div class="col mb-5">
                         <div class="card h-100">
-                            <!-- Sale badge-->
+                            Sale badge
                             <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
-                            <!-- Product image-->
+                            Product image
                             <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                            <!-- Product details-->
+                            Product details
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
+                                    Product name
                                     <h5 class="fw-bolder">Special Item</h5>
-                                    <!-- Product reviews-->
+                                    Product reviews
                                     <div class="d-flex justify-content-center small text-warning mb-2">
                                         <div class="bi-star-fill"></div>
                                         <div class="bi-star-fill"></div>
@@ -224,12 +319,12 @@
                                         <div class="bi-star-fill"></div>
                                         <div class="bi-star-fill"></div>
                                     </div>
-                                    <!-- Product price-->
+                                    Product price
                                     <span class="text-muted text-decoration-line-through">$20.00</span>
                                     $18.00
                                 </div>
                             </div>
-                            <!-- Product actions-->
+                            Product actions
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
                             </div>
@@ -237,14 +332,14 @@
                     </div>
                     <div class="col mb-5">
                         <div class="card h-100">
-                            <!-- Product image-->
+                            Product image
                             <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                            <!-- Product details-->
+                            Product details
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
+                                    Product name
                                     <h5 class="fw-bolder">Popular Item</h5>
-                                    <!-- Product reviews-->
+                                    Product reviews
                                     <div class="d-flex justify-content-center small text-warning mb-2">
                                         <div class="bi-star-fill"></div>
                                         <div class="bi-star-fill"></div>
@@ -252,16 +347,16 @@
                                         <div class="bi-star-fill"></div>
                                         <div class="bi-star-fill"></div>
                                     </div>
-                                    <!-- Product price-->
+                                    Product price
                                     $40.00
                                 </div>
                             </div>
-                            <!-- Product actions-->
+                            Product actions
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </section>
@@ -291,9 +386,10 @@
 		location.href = 'login';
 	});
 	
-	//로그아웃
-	$('#navLogoutBtn').click(function(){		
-		location.href = 'logout';
-	});
+	//로그인 후 이용가능 문구 띄우기
+	$('#sampleBtn').click(function(){
+		alert('로그인 후 이용가능합니다');
+	})
+
 </script>
 </html>

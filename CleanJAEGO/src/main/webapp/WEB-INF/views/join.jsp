@@ -209,7 +209,7 @@
 			}).done(function(data){
 				let json = (new Function('return'+data))();
 				if(json[0].res=='1'){
-				alert('회원가입 성공!');
+				alert('회원가입 성공!\r\n로그인 화면으로 이동합니다');
 				location.href= 'login';					
 				}else if(json[0].res=='0'){
 					alert('관리자에게 문의하세요');

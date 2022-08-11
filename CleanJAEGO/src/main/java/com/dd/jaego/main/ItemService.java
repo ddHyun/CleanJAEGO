@@ -11,24 +11,10 @@ import com.dd.jaego.vo.ItemVO;
 import com.dd.jaego.vo.UserVO;
 
 @Service
-public class MainService {
-	
-	@Autowired
-	MainMapper mainMapper;
+public class ItemService {
 	
 	@Autowired
 	ItemMapper itemMapper;
-
-	//회원목록 가져오기
-	public ArrayList<UserVO> showUserList() {
-		ArrayList<UserVO> userList = mainMapper.showUserList();
-		return userList;
-	}
-
-	//회원목록 추가하기
-	public int insertUser(UserVO vo) {
-		return mainMapper.insertUser(vo);
-	}
 
 	//해당아이디에 저장된 목록유무 확인하기
 	public int checkItemList(String email) {
