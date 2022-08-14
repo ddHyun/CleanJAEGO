@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 
@@ -46,6 +47,14 @@
 </style>
 
 <body>
+		<c:set var="now" value="<%=new java.util.Date()%>" />
+		<c:set var="sysDate"><fmt:formatDate value="${now}" pattern="yyyyMMdd" /></c:set>
+       	<input type="hidden" value="${sysDate }">
+       	
+       	<fmt:parseNumber var="dateToday" value="${sysDate}.time/(1000*60*60*24)" integerOnly="true" />       	
+       	<input type="hidden" value="dateToday: ${dateToday}">
+
+                	
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
@@ -87,7 +96,8 @@
                 </div>
             </div>
         </header>
-        <!-- Section-->
+        
+        <!-- Section-->       
         <section class="py-5" style="background-color:#cfffe5">
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
@@ -108,7 +118,12 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">${item.item_name}</h5>
                                     <!-- Stock -->
-                                    	총재고 : ${item.stock }개<br>
+                                    <c:choose>
+                                    <c:when test="${item.stock le 1}">
+                                    	<span style="color:#cf565c">총재고 : ${item.stock }개</span><br>
+                                    </c:when>
+                                    <c:otherwise>총재고 : ${item.stock }개<br></c:otherwise>
+                                    </c:choose>
                                     <!-- Manufacture date -->
                                     	제조일자 : ${item.manufacture_date }<br>
                                     <!-- Expiry date -->
@@ -117,18 +132,51 @@
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">수정하기</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="modifyBtn${item.idx}">수정하기</a></div>
                             </div>
                         </div>
                     </div>
                    </c:forEach>
+                   
+                   <!-- 기존목록 열거 후 등록하기 section -->
+                   <div class="col mb-5">
+                   		<div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="resources/assets/noImage.png" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder"></h5>
+                                    <!-- Stock -->
+                                    	<br>
+                                    <!-- Manufacture date -->
+                                    	관리할 제품을<br>등록해주세요<br>
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="registerBtn">등록하기</a></div>
+                            </div>
+                        </div>
+                     </div>
                    </c:if>
                    
 		<!----------------------------------- 로그인 상태가 아닌 경우/기본화면 ----------------------------------->                 
-                   <c:if test="${sessionEmail eq null}">
+                   <c:if test="${empty sessionEmail}">
                    <c:forEach var="item" items="${itemList }">
+                   <!-- 유통기한 String >> Date 변환 후 Number로 변환 -->
+                   <fmt:parseDate var="date1" value="${item.expiry_date}" pattern="yyyy-MM-dd" />
+				   <fmt:formatDate var="date2" value="${date1}" pattern="yyyyMMdd"/>
+                   <fmt:parseNumber var="dateExpiry" value="${date2}.time/(1000*60*60*24)" integerOnly="true" />
+                   
+
                     <div class="col mb-5">
-                        <div class="card h-100">                        
+                        <div class="card h-100"> 
+                        	<!-- (유통기한-현재날짜)가 3일 이하일 때 임박 띄우기 -->
+                        	<c:if test="${item.stock le 1 || (dateExpiry-dateToday)<=3}">
+                        		<div class="badge bg-dark text-white position-absolute" style="top: 12.8rem; right: 0.5rem">임박!!</div>
+                        	</c:if>                       
                             <!-- Product image-->
                             <img class="card-img-top" src="resources/assets/${item.filename }" alt="..." />
                             <!-- Product details-->
@@ -137,16 +185,26 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">${item.item_name}</h5>
                                     <!-- Stock -->
-                                    	총재고 : ${item.stock }개<br>
+                                    <c:choose>
+                                    <c:when test="${item.stock le 1}">
+                                    	<span style="color:#cf565c">총재고 : ${item.stock }개</span><br>
+                                    </c:when>
+                                    <c:otherwise>총재고 : ${item.stock }개<br></c:otherwise>
+                                    </c:choose>                                    	
                                     <!-- Manufacture date -->
-                                    	제조일자 : ${item.manufacture_date }<br>
+                                    	제조일자 : ${item.manufacture_date }<br>                                    	
                                     <!-- Expiry date -->
-                                    	유통기한 : ${item.expiry_date }
+                                    <c:choose>
+                                    	<c:when test="${(dateExpiry-dateToday)<=3}">
+                                    	<span style="color:#cf565c">유통기한 : ${item.expiry_date }</span>
+                                    	</c:when>
+                                    	<c:otherwise>유통기한 : ${item.expiry_date }</c:otherwise>
+                                    </c:choose>                                   		  
                                 </div>
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">수정하기</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="sampleBtn${item.idx}">수정하기</a></div>
                             </div>
                         </div>
                     </div>
@@ -156,28 +214,26 @@
                    <c:if test="${sessionEmail ne null && dbResult eq '0'}">
                    <c:forEach var="item" items="${itemList }">
                     <div class="col mb-5">
-                        <div class="card h-100">
+                   		<div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" src="resources/assets/${item.filename }" alt="..." />
+                            <img class="card-img-top" src="resources/assets/noImage.png" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <h5 class="fw-bolder">${item.item_name}</h5>
+                                    <h5 class="fw-bolder"></h5>
                                     <!-- Stock -->
-                                    	총재고 : ${item.stock }개<br>
+                                    	<br>
                                     <!-- Manufacture date -->
-                                    	제조일자 : ${item.manufacture_date }<br>
-                                    <!-- Expiry date -->
-                                    	유통기한 : ${item.expiry_date }
+                                    	관리할 제품을<br>등록해주세요<br>
                                 </div>
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">등록하기</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="registerBtn">등록하기</a></div>
                             </div>
                         </div>
-                    </div>
+                     </div>
                    </c:forEach>
                    </c:if>
                     <!-- <div class="col mb-5">
@@ -387,9 +443,18 @@
 	});
 	
 	//로그인 후 이용가능 문구 띄우기
-	$('#sampleBtn').click(function(){
+	//반복문 안의 onclick은 id 다르게 해서 동작하게 하기
+	$("a[id^='sampleBtn']").on('click', function(e){
 		alert('로그인 후 이용가능합니다');
-	})
-
+	});
+	
+	//수정하기버튼
+	$("a[id^='modify']").on('click', function(){		
+	});
+	
+	//등록하기버튼
+	$('#registerBtn').click(function(){
+		
+	});
 </script>
 </html>

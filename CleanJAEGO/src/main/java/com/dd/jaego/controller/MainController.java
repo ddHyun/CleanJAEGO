@@ -1,6 +1,12 @@
 package com.dd.jaego.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
@@ -41,25 +47,25 @@ public class MainController {
 		//DB에 해당이메일의 재고목록 유무 확인
 		String result = checkItemIdx();
 		if(result.equals("0")) {//이메일O 목록X
-			System.out.println("이메일O 목록X");
-			ItemVO itemVO = new ItemVO("제품명", 0, "-", "-", "noImage.png");
-			itemList.add(itemVO);
+			System.out.println("이메일O 목록X");			
 		}else if(result.equals("noSession")) {//로그인 안된 상태
 			System.out.println("로그인 안된 상태");
-			ItemVO itemVO1 = new ItemVO("골든커리", 4, "-", "2022-09-15", "curry.jpg");
-			ItemVO itemVO2 = new ItemVO("콘통조림", 5, "-", "2024-05-30", "corn.png");
-			ItemVO itemVO3 = new ItemVO("파스타/푸실리", 1, "-", "2022-08-30", "pasta.jpg");
-			ItemVO itemVO4 = new ItemVO("부침가루", 2, "-", "2022-12-28", "flour.jpg");
+			ItemVO itemVO1 = new ItemVO(0, "골든커리", 4, "-", "2022-09-01", "curry.jpg");
+			ItemVO itemVO2 = new ItemVO(1, "콘통조림", 5, "-", "2024-05-30", "corn.png");
+			ItemVO itemVO3 = new ItemVO(2, "파스타/푸실리", 1, "-", "2022-08-15", "pasta.jpg");
+			ItemVO itemVO4 = new ItemVO(3, "부침가루", 2, "-", "2022-12-28", "flour.jpg");
 			itemList.add(itemVO1);
 			itemList.add(itemVO2);
 			itemList.add(itemVO3);
 			itemList.add(itemVO4);
 		}else {//이메일O 목록O
 			itemList = showitemList();			
-		}
+		}			
+		
 		model.addAttribute("itemList", itemList);
 		model.addAttribute("dbResult", result);
 		logger.info("==========mainPage==========");
+		
 		return "main";
 	}
 	
