@@ -1,12 +1,10 @@
 package com.dd.jaego.controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
@@ -41,7 +39,7 @@ public class MainController {
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
 	//메인페이지로 이동
-	@RequestMapping(value= {"/", "/main"})
+	@RequestMapping(value= "/main")
 	public String mainPage(Model model) {
 		itemList = new ArrayList<ItemVO>();
 		//DB에 해당이메일의 재고목록 유무 확인
@@ -50,20 +48,37 @@ public class MainController {
 			System.out.println("이메일O 목록X");			
 		}else if(result.equals("noSession")) {//로그인 안된 상태
 			System.out.println("로그인 안된 상태");
-			ItemVO itemVO1 = new ItemVO(0, "골든커리", 4, "-", "2022-09-01", "curry.jpg");
+			ItemVO itemVO1 = new ItemVO(0, "골든커리", 4, "-", "2022-08-17", "curry.jpg");
 			ItemVO itemVO2 = new ItemVO(1, "콘통조림", 5, "-", "2024-05-30", "corn.png");
-			ItemVO itemVO3 = new ItemVO(2, "파스타/푸실리", 1, "-", "2022-08-15", "pasta.jpg");
-			ItemVO itemVO4 = new ItemVO(3, "부침가루", 2, "-", "2022-12-28", "flour.jpg");
+			ItemVO itemVO3 = new ItemVO(2, "파스타/푸실리", 1, "-", "2022-08-16", "pasta.jpg");
+			ItemVO itemVO4 = new ItemVO(3, "부침가루", 2, "-", "-", "flour.jpg");
 			itemList.add(itemVO1);
 			itemList.add(itemVO2);
 			itemList.add(itemVO3);
 			itemList.add(itemVO4);
 		}else {//이메일O 목록O
-			itemList = showitemList();			
+			itemList = showitemList();	
+		}	
+		
+		long dateGap = 0;
+		String resultGap = "";
+		
+		for (int i = 0; i < itemList.size(); i++) {
+			if(!itemList.get(i).getExpiry_date().equals("-")) {
+				LocalDate now = LocalDate.now();
+				String dateExpiry1 = itemList.get(i).getExpiry_date();
+				LocalDate dateExpiry2 = LocalDate.parse(dateExpiry1, DateTimeFormatter.ISO_DATE);
+				dateGap = ChronoUnit.DAYS.between(now, dateExpiry2);
+				itemList.get(i).setDateGap(dateGap);
+			}else {				
+				dateGap = 100000000;
+				itemList.get(i).setDateGap(dateGap);
+			}
 		}			
 		
+		model.addAttribute("resultGap", resultGap);//유통기한과 현재날짜 차이
 		model.addAttribute("itemList", itemList);
-		model.addAttribute("dbResult", result);
+		model.addAttribute("dbResult", result); //재고유무확인
 		logger.info("==========mainPage==========");
 		
 		return "main";
@@ -122,6 +137,22 @@ public class MainController {
 		itemList = itemService.showItemList(email);			
 
 		return itemList;
+	}
+	
+	//선택목록 삭제하기
+	@ResponseBody
+	@RequestMapping(value="/deleteItem", method=RequestMethod.POST)
+	public String deleteItem(int idx) {
+		String email = (String)session.getAttribute("sessionEmail");
+		ItemVO itemVO = new ItemVO();
+		int resultNum = 0; //db삭제여부 확인용 변수
+		
+		itemVO.setEmail(email);
+		itemVO.setIdx(idx);
+		resultNum = itemService.deleteItem(itemVO);
+		
+		String result = String.format("[{'resultNum':'%s'}]", ""+resultNum);
+		return result;
 	}
 	
 	//로그인하기

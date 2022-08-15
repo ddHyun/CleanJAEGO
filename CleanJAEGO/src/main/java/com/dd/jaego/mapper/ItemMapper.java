@@ -19,4 +19,7 @@ public interface ItemMapper {
 	//재고전체목록 가져오기
 	@Select("select * from jgItem where email=#{email}")
 	public ArrayList<ItemVO> showItemList(String email);
+
+	//선택항목 삭제하기
+	public int deleteItem(ItemVO vo);
 }
