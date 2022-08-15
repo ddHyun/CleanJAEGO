@@ -9,8 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT NVL(COUNT(IDX), 0) AS result FROM JGITEM WHERE EMAIL = #{email}
 	</select>
 	
-	<!-- 재고전체목록 가져오기 -->
-	<!-- <select id="showItemList" resultType="ArrayList" parameterType="String">
-		select * from jgitem where email=#{email}
-	</select> -->
+	<delete id="deleteItem" parameterType="itemVO">
+		delete from jgitem where email=#{email} and idx=#{idx}
+	</delete>
 </mapper>

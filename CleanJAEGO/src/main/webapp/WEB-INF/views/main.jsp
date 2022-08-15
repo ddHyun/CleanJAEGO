@@ -46,15 +46,7 @@
 }
 </style>
 
-<body>
-		<c:set var="now" value="<%=new java.util.Date()%>" />
-		<c:set var="sysDate"><fmt:formatDate value="${now}" pattern="yyyyMMdd" /></c:set>
-       	<input type="hidden" value="${sysDate }">
-       	
-       	<fmt:parseNumber var="dateToday" value="${sysDate}.time/(1000*60*60*24)" integerOnly="true" />       	
-       	<input type="hidden" value="dateToday: ${dateToday}">
-
-                	
+<body>		
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
@@ -107,7 +99,7 @@
                   <c:forEach var="item" items="${itemList }">
                     <div class="col mb-5">
                         <div class="card h-100">
-                        	<c:if test="${item.stock le 1 }">
+                        	<c:if test="${item.stock le 1 || item.dateGap le 3}">
                         		<div class="badge bg-dark text-white position-absolute" style="top: 12.8rem; right: 0.5rem">임박!!</div>
                         	</c:if>
                             <!-- Product image-->
@@ -127,12 +119,21 @@
                                     <!-- Manufacture date -->
                                     	제조일자 : ${item.manufacture_date }<br>
                                     <!-- Expiry date -->
-                                    	유통기한 : ${item.expiry_date }
+                                    <input type="hidden" value="${item.idx }" id="itemIdxInput">
+                                    <c:choose>
+                                    <c:when test="${item.dateGap le 3}">
+                                    	<span style="color:#cf565c">유통기한 : ${item.expiry_date }</span>
+                                    </c:when>
+                                    <c:otherwise>유통기한 : ${item.expiry_date }</c:otherwise>
+                                    </c:choose>  
                                 </div>
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="modifyBtn${item.idx}">수정하기</a></div>
+                                <div class="text-center">
+                                	<a class="btn btn-outline-dark mt-auto" id="modifyBtn${item.idx}">수정하기</a>&nbsp;&nbsp;
+                                	<a class="btn btn-outline-dark mt-auto" id="deleteBtn${item.idx}">삭제하기</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -165,16 +166,10 @@
 		<!----------------------------------- 로그인 상태가 아닌 경우/기본화면 ----------------------------------->                 
                    <c:if test="${empty sessionEmail}">
                    <c:forEach var="item" items="${itemList }">
-                   <!-- 유통기한 String >> Date 변환 후 Number로 변환 -->
-                   <fmt:parseDate var="date1" value="${item.expiry_date}" pattern="yyyy-MM-dd" />
-				   <fmt:formatDate var="date2" value="${date1}" pattern="yyyyMMdd"/>
-                   <fmt:parseNumber var="dateExpiry" value="${date2}.time/(1000*60*60*24)" integerOnly="true" />
-                   
-
                     <div class="col mb-5">
                         <div class="card h-100"> 
-                        	<!-- (유통기한-현재날짜)가 3일 이하일 때 임박 띄우기 -->
-                        	<c:if test="${item.stock le 1 || (dateExpiry-dateToday)<=3}">
+                        	<!-- 총재고가 1 이하이거나 (유통기한-현재날짜)가 3일 이하일 때 임박 띄우기 -->
+                        	<c:if test="${item.stock le 1 || item.dateGap le 3}">
                         		<div class="badge bg-dark text-white position-absolute" style="top: 12.8rem; right: 0.5rem">임박!!</div>
                         	</c:if>                       
                             <!-- Product image-->
@@ -194,12 +189,12 @@
                                     <!-- Manufacture date -->
                                     	제조일자 : ${item.manufacture_date }<br>                                    	
                                     <!-- Expiry date -->
-                                    <c:choose>
-                                    	<c:when test="${(dateExpiry-dateToday)<=3}">
+                                   	<c:choose>
+                                    <c:when test="${item.dateGap le 3}">
                                     	<span style="color:#cf565c">유통기한 : ${item.expiry_date }</span>
-                                    	</c:when>
-                                    	<c:otherwise>유통기한 : ${item.expiry_date }</c:otherwise>
-                                    </c:choose>                                   		  
+                                    </c:when>
+                                    <c:otherwise>유통기한 : ${item.expiry_date }</c:otherwise>
+                                    </c:choose>                                      		  
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -211,8 +206,7 @@
                    </c:forEach>
                    </c:if>
 		<!----------------------------------- 로그인은 되어있지만 저장된 재고목록이 없는 경우 ----------------------------------->                   
-                   <c:if test="${sessionEmail ne null && dbResult eq '0'}">
-                   <c:forEach var="item" items="${itemList }">
+                   <c:if test="${sessionEmail ne null && dbResult eq '0'}">                   
                     <div class="col mb-5">
                    		<div class="card h-100">
                             <!-- Product image-->
@@ -234,7 +228,6 @@
                             </div>
                         </div>
                      </div>
-                   </c:forEach>
                    </c:if>
                     <!-- <div class="col mb-5">
                         <div class="card h-100">
@@ -450,6 +443,32 @@
 	
 	//수정하기버튼
 	$("a[id^='modify']").on('click', function(){		
+	});
+	
+	//삭제하기버튼
+	$("a[id^='deleteBtn']").on('click', function(){
+		if(!confirm('삭제하시겠습니까?')){
+			return;
+		}else{//선택목록 삭제하기
+			let itemIdx = $('#itemIdxInput').val();
+			$.ajax({
+				url:'deleteItem',
+				data:{'idx':itemIdx},
+				datatype:'json',
+				type:'post'				
+			}).done(function(data){
+				let json = (new Function('return'+data))();
+				if(json[0].resultNum=='1'){
+					alert('삭제되었습니다');
+					location.href = 'main';					
+				}else{
+					alert('다시 시도해 주세요');
+					return;
+				}
+			}).fail(function(){
+				alert('fail');
+			});
+		}
 	});
 	
 	//등록하기버튼

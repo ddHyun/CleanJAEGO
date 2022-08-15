@@ -6,13 +6,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class ItemVO {
 	private int idx, stock;
+	private long dateGap; //dateGap: 임박알림을 위한 날짜차이 저장용 변수
 	private String email, category, item_name, manufacture_date, expiry_date,
 					price, store, filename;
 	private MultipartFile file; //업로드 사진
 	
-	public ItemVO() {}
-	
-	
+	public ItemVO() {}	
 	
 	public ItemVO(int idx, String item_name, int stock, String manufacture_date, String expiry_date, String filename) {
 		this.idx = idx;
@@ -22,8 +21,6 @@ public class ItemVO {
 		this.expiry_date = expiry_date;
 		this.filename = filename;
 	}
-
-
 
 	public int getIdx() {
 		return idx;
@@ -90,5 +87,11 @@ public class ItemVO {
 	}
 	public void setFile(MultipartFile file) {
 		this.file = file;
-	}	
+	}
+	public long getDateGap() {
+		return dateGap;
+	}
+	public void setDateGap(long dateGap) {
+		this.dateGap = dateGap;
+	}		
 }

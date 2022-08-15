@@ -27,6 +27,11 @@ public class ItemService {
 		ArrayList<ItemVO> itemList = itemMapper.showItemList(email);
 		return itemList;
 	}
+
+	//선택항목 삭제하기
+	public int deleteItem(ItemVO vo) {
+		return itemMapper.deleteItem(vo);
+	}
 	
 
 }
