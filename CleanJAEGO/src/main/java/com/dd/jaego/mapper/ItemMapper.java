@@ -21,5 +21,9 @@ public interface ItemMapper {
 	public ArrayList<ItemVO> showItemList(String email);
 
 	//선택항목 삭제하기
-	public int deleteItem(ItemVO vo);
+	public int deleteItem(ItemVO itemVO);
+
+	//선택항목 내용조회
+	@Select("select * from jgitem where email=#{email} and idx=#{idx}")
+	public ItemVO showDetail(ItemVO itemVO);
 }

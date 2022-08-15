@@ -119,7 +119,6 @@
                                     <!-- Manufacture date -->
                                     	제조일자 : ${item.manufacture_date }<br>
                                     <!-- Expiry date -->
-                                    <input type="hidden" value="${item.idx }" id="itemIdxInput">
                                     <c:choose>
                                     <c:when test="${item.dateGap le 3}">
                                     	<span style="color:#cf565c">유통기한 : ${item.expiry_date }</span>
@@ -131,7 +130,8 @@
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center">
-                                	<a class="btn btn-outline-dark mt-auto" id="modifyBtn${item.idx}">수정하기</a>&nbsp;&nbsp;
+                                    <input type="text" value="${item.idx}" id="itemIdxInput${item.idx}">
+                                	<a class="btn btn-outline-dark mt-auto" id="detailBtn${item.idx}">수정하기</a>&nbsp;&nbsp;
                                 	<a class="btn btn-outline-dark mt-auto" id="deleteBtn${item.idx}">삭제하기</a>
                                 </div>
                             </div>
@@ -442,7 +442,13 @@
 	});
 	
 	//수정하기버튼
-	$("a[id^='modify']").on('click', function(){		
+	$("a[id^='detailBtn']").on('click', function(e){	
+		//<input type="hidden" value="${item.idx }" id="itemIdxInput${item.idx}">
+		let itemIdx = $("input[id^='itemIdxInput']");
+		console.log(e.target);
+		console.log(itemIdx[0]);
+		console.log(itemIdx[1]);
+		//location.href = 'detail?idx='+itemIdx;
 	});
 	
 	//삭제하기버튼
