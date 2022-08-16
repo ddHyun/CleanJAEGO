@@ -26,4 +26,8 @@ public interface ItemMapper {
 	//선택항목 내용조회
 	@Select("select * from jgitem where email=#{email} and idx=#{idx}")
 	public ItemVO showDetail(ItemVO itemVO);
+
+	//모든카테고리 목록 가져오기
+	@Select("SELECT DISTINCT category FROM JGITEM j WHERE email=#{email}")
+	public ArrayList<String> getCategory(String email);
 }

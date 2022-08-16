@@ -16,6 +16,10 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
 <!-- Core theme CSS (includes Bootstrap)-->
 <link href="resources/css/styles.css" rel="stylesheet" />
+<!-- Additional CSS Files -->
+<link rel="stylesheet" href="resources/css/templatemo-klassy-cafe.css">
+<link rel="stylesheet" href="resources/css/owl-carousel.css">
+<link rel="stylesheet" href="resources/css/lightbox.css">
 </head>
 <style>
 @media (min-width: 576px) {
@@ -87,24 +91,118 @@
             </div>
         </header>
         
-        <!-- Section-->       
+        <!-- Section-->          
         <section class="py-5" style="background-color:#cfffe5">
-            <div class="container px-4 px-lg-5 mt-5">
-                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                
-                
-                	제품명 : ${itemVO.item_name}<br>
-                	카테고리 : ${itemVO.category }<br>
-                	가격 : ${itemVO.price}<br>
-                	구매처 : ${itemVO.store}<br>
-                
-                
-                
+           <div class="container px-4 px-lg-5 mt-5">
+           <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+			 <div class="col-lg-6" style="width:100%">
+                    <div class="contact-form">
+                        <form id="contact" action="" method="post">
+                          <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <h4>Table Reservation</h4>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                              <fieldset>
+                                <select name="카테고리" id="categorySelect">
+	                                    <option value="${itemVO.category}">${itemVO.category}</option>
+                                    <c:forEach var="category" items="${categoryList}">
+	                                    <option name="Breakfast" id="Breakfast">${category}</option>
+                                    </c:forEach>
+	                                    <option name="Lunch" id="Lunch">Lunch</option>
+	                                    <option name="Dinner" id="Dinner">Dinner</option>
+                                </select>
+                              </fieldset>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                              <fieldset>
+                                	제품명<input type="text" value="${itemVO.item_name}" id="nameInput">
+                              </fieldset>
+                            </div>
+                              <div class="col-lg-6 col-sm-12">
+                              <fieldset>
+                                	총재고<input type="text" value="${itemVO.stock}" id="stockInput">
+                              </fieldset>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                              <fieldset>
+                              		제조일자<input type="date" value="${itemVO.manufacture_date}" id="manufactureDateInput">
+                            </fieldset>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                              <fieldset>
+                              		유통기한<input type="date" value="${itemVO.expiry_date}" id="expiryDateInput">
+                            </fieldset>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                              <fieldset>
+                                	가격<input type="text" value="${itemVO.price}" id="priceInput">
+                              </fieldset>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                              <fieldset>
+                                	구매처<input type="text" value="${itemVO.store}" id="storeInput">
+                              </fieldset>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                              <fieldset>
+                                <select value="number-guests" name="number-guests" id="number-guests">
+                                    <option value="number-guests">Number Of Guests</option>
+                                    <option name="1" id="1">1</option>
+                                    <option name="2" id="2">2</option>
+                                    <option name="3" id="3">3</option>
+                                    <option name="4" id="4">4</option>
+                                    <option name="5" id="5">5</option>
+                                    <option name="6" id="6">6</option>
+                                    <option name="7" id="7">7</option>
+                                    <option name="8" id="8">8</option>
+                                    <option name="9" id="9">9</option>
+                                    <option name="10" id="10">10</option>
+                                    <option name="11" id="11">11</option>
+                                    <option name="12" id="12">12</option>
+                                </select>
+                              </fieldset>
+                            </div>
+                            <div class="col-lg-6">
+                                <div id="filterDate2">    
+                                  <div class="input-group date" data-date-format="dd/mm/yyyy">
+                                    <input  name="date" id="date" type="text" class="form-control" placeholder="dd/mm/yyyy">
+                                    <div class="input-group-addon" >
+                                      <span class="glyphicon glyphicon-th"></span>
+                                    </div>
+                                  </div>
+                                </div>   
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                              <fieldset>
+                                <select value="time" name="time" id="time">
+                                    <option value="time">Time</option>
+                                    <option name="Breakfast" id="Breakfast">Breakfast</option>
+                                    <option name="Lunch" id="Lunch">Lunch</option>
+                                    <option name="Dinner" id="Dinner">Dinner</option>
+                                </select>
+                              </fieldset>
+                            </div>
+                            <div class="col-lg-12">
+                              <fieldset>
+                                <textarea name="message" rows="6" id="message" placeholder="Message" required=""></textarea>
+                              </fieldset>
+                            </div>
+                            <div class="col-lg-12">
+                              <fieldset>
+                                <button type="button" id="modifyBtn" class="main-button-icon" 
+                                style="background-color:#cf565c; border-color:#cf565c">수정하기</button>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+                </div>
+          </div>
         </section>
         <!-- Footer-->
-        <footer class="py-5 bg-dark">
+        <footer class="py-5 bg-dark" style="margin-top:0px">
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p></div>
         </footer>
         <!-- Bootstrap core JS-->
@@ -113,4 +211,14 @@
         <script src="resources/js/scripts.js"></script>
         <script src="resources/js/jquery-3.6.0.min.js"></script>
 </body>
+<script>
+	$(document).ready(function(){
+		let sessionEmail = "${sessionScope.sessionEmail}";
+		if(sessionEmail == '' || sessionEmail == 'none'){
+			$('#navLogoutBtn').hide();
+		}else{
+			$('#navLoginBtn').hide();
+		}		
+	});
+</script>
 </html>

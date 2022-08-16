@@ -37,6 +37,11 @@ public class ItemService {
 	public ItemVO showDetail(ItemVO itemVO) {
 		return itemMapper.showDetail(itemVO);
 	}
+
+	//모든카테고리 목록 가져오기
+	public ArrayList<String> getCategory(String email) {
+		return itemMapper.getCategory(email);
+	}
 	
 
 }

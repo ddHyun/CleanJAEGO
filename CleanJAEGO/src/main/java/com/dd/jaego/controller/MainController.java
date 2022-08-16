@@ -116,11 +116,11 @@ public class MainController {
 		
 		//선택항목 내용조회
 		ItemVO itemVO2 = itemService.showDetail(itemVO);	
-		System.out.println("제품명 : "+itemVO2.getItem_name());
-		System.out.println(itemVO2.getCategory());
-		System.out.println(itemVO2.getStore());
+		//모든카테고리 목록 가져오기
+		ArrayList<String> categoryList = itemService.getCategory(email);
 		
 		model.addAttribute("itemVO", itemVO2);
+		model.addAttribute("categoryList", categoryList);
 		return "detail";
 	}
 	

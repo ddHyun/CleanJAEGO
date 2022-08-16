@@ -9,7 +9,7 @@ public class ItemVO {
 	private long dateGap; //dateGap: 임박알림을 위한 날짜차이 저장용 변수
 	private String email, category, item_name, manufacture_date, expiry_date,
 					price, store, filename;
-	private MultipartFile file; //업로드 사진
+	private MultipartFile file; //업로드 사진	
 	
 	public ItemVO() {}	
 	
