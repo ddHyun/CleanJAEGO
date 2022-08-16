@@ -29,8 +29,18 @@ public class ItemService {
 	}
 
 	//선택항목 삭제하기
-	public int deleteItem(ItemVO vo) {
-		return itemMapper.deleteItem(vo);
+	public int deleteItem(ItemVO itemVO) {
+		return itemMapper.deleteItem(itemVO);
+	}
+
+	//선택항목 내용조회
+	public ItemVO showDetail(ItemVO itemVO) {
+		return itemMapper.showDetail(itemVO);
+	}
+
+	//모든카테고리 목록 가져오기
+	public ArrayList<String> getCategory(String email) {
+		return itemMapper.getCategory(email);
 	}
 	
 

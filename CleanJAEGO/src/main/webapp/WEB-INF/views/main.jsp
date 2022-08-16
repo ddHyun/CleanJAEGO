@@ -96,7 +96,7 @@
                 
 		<!----------------------------------- 로그인 되어있으면서 저장된 재고목록도 있는 경우 ----------------------------------->
            		  <c:if test="${sessionEmail ne null && dbResult ne '0' && dbResult ne 'noSession' }">
-                  <c:forEach var="item" items="${itemList }">
+                  <c:forEach var="item" items="${itemList }" varStatus="status">
                     <div class="col mb-5">
                         <div class="card h-100">
                         	<c:if test="${item.stock le 1 || item.dateGap le 3}">
@@ -119,7 +119,6 @@
                                     <!-- Manufacture date -->
                                     	제조일자 : ${item.manufacture_date }<br>
                                     <!-- Expiry date -->
-                                    <input type="hidden" value="${item.idx }" id="itemIdxInput">
                                     <c:choose>
                                     <c:when test="${item.dateGap le 3}">
                                     	<span style="color:#cf565c">유통기한 : ${item.expiry_date }</span>
@@ -131,8 +130,8 @@
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center">
-                                	<a class="btn btn-outline-dark mt-auto" id="modifyBtn${item.idx}">수정하기</a>&nbsp;&nbsp;
-                                	<a class="btn btn-outline-dark mt-auto" id="deleteBtn${item.idx}">삭제하기</a>
+                                	<a class="btn btn-outline-dark mt-auto" onclick="showDetail(${item.idx})">수정하기</a>&nbsp;&nbsp;
+                                	<a class="btn btn-outline-dark mt-auto" onclick="deleteItem(${item.idx})">삭제하기</a>
                                 </div>
                             </div>
                         </div>
@@ -439,21 +438,22 @@
 	//반복문 안의 onclick은 id 다르게 해서 동작하게 하기
 	$("a[id^='sampleBtn']").on('click', function(e){
 		alert('로그인 후 이용가능합니다');
-	});
+	});	
+
+	//수정하기
+	function showDetail(index) {
+		location.href='detail?idx='+index;
+	}
 	
-	//수정하기버튼
-	$("a[id^='modify']").on('click', function(){		
-	});
 	
-	//삭제하기버튼
-	$("a[id^='deleteBtn']").on('click', function(){
+	//삭제하기
+	function deleteItem(index) {
 		if(!confirm('삭제하시겠습니까?')){
 			return;
 		}else{//선택목록 삭제하기
-			let itemIdx = $('#itemIdxInput').val();
 			$.ajax({
 				url:'deleteItem',
-				data:{'idx':itemIdx},
+				data:{'idx':index},
 				datatype:'json',
 				type:'post'				
 			}).done(function(data){
@@ -469,7 +469,7 @@
 				alert('fail');
 			});
 		}
-	});
+	}	
 	
 	//등록하기버튼
 	$('#registerBtn').click(function(){
