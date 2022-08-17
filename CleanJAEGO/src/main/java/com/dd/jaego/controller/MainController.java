@@ -39,7 +39,7 @@ public class MainController {
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
 	//메인페이지로 이동
-	@RequestMapping(value= "/main")
+	@RequestMapping(value= {"/","/main"})
 	public String mainPage(Model model) {
 		itemList = new ArrayList<ItemVO>();
 		//DB에 해당이메일의 재고목록 유무 확인
