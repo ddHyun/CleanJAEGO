@@ -44,7 +44,10 @@
  img{
   	height: 178.66px;
   	object-fit: contain;
-  }
+  }  
+  .tooltip-inner{
+  	background:#84482b;
+  }  
 }
 </style>
 
@@ -97,98 +100,72 @@
            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
 			 <div class="col-lg-6" style="width:100%">
                     <div class="contact-form">
-                        <form id="contact" action="" method="post">
+                        <form id="contact" action="" method="post" enctype="multipart/form-data">
                           <div class="row">
-                            <div class="col-md-6 col-sm-12">
-                                <h4>Table Reservation</h4>
+                            <div class="col-md-6 col-sm-12" align="center">
+                            <div>
+                            	<!-- 이미지태그 위에 마우스 올리면 문구 띄우기 -->
+                            	<a data-toggle="tooltip" title="사진을 등록하려면 클릭!">
+                            		<!-- 이미지 -->
+                            		<img width="50%" height="100%" id="itemImg">
+                            	</a>
                             </div>
-                            <div class="col-md-6 col-sm-12">
+                            <div id="file-area">
+                            	<input type="file" id="itemImg1" onchange="loadImg(this,1)">
+                            </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                <select name="카테고리" id="categorySelect">
-	                                    <option value="${itemVO.category}">${itemVO.category}</option>
+                                <select name="itemCategory" id="categorySelect">
                                     <c:forEach var="category" items="${categoryList}">
-	                                    <option name="Breakfast" id="Breakfast">${category}</option>
-                                    </c:forEach>
-	                                    <option name="Lunch" id="Lunch">Lunch</option>
-	                                    <option name="Dinner" id="Dinner">Dinner</option>
+                                    	<c:choose>
+                                    		<c:when test="${category eq itemVO.category}">
+		                                    	<option value="${itemVO.category}" selected="selected">${itemVO.category}</option>
+                                    		</c:when>
+                                    		<c:otherwise><option value="${category}">${category}</option></c:otherwise>
+                                    	</c:choose>                                    	
+                                    </c:forEach>	                                    
                                 </select>
                               </fieldset>
                             </div>
-                            <div class="col-lg-6 col-sm-12">
+                            <input type="hidden" value="${itemVO.idx}">
+                            <div class="col-lg-6 col-sm-12" style="border-color:#cf565c; margin-top:10px">
                               <fieldset>
-                                	제품명<input type="text" value="${itemVO.item_name}" id="nameInput">
+                                &nbsp;&nbsp;<strong>제품명</strong><input type="text" value="${itemVO.item_name}" id="nameInput">
                               </fieldset>
                             </div>
-                              <div class="col-lg-6 col-sm-12">
+                              <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                	총재고<input type="text" value="${itemVO.stock}" id="stockInput">
+                                &nbsp;&nbsp;<strong>총재고</strong><input type="text" value="${itemVO.stock}" id="stockInput">
                               </fieldset>
                             </div>
-                            <div class="col-lg-6 col-sm-12">
+                            <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                              		제조일자<input type="date" value="${itemVO.manufacture_date}" id="manufactureDateInput">
+                              	&nbsp;&nbsp;<strong>제조일자</strong><input type="date" value="${itemVO.manufacture_date}" id="manufactureDateInput">
                             </fieldset>
                             </div>
-                            <div class="col-lg-6 col-sm-12">
+                            <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                              		유통기한<input type="date" value="${itemVO.expiry_date}" id="expiryDateInput">
+                              	&nbsp;&nbsp;<strong>유통기한</strong><input type="date" value="${itemVO.expiry_date}" id="expiryDateInput">
                             </fieldset>
                             </div>
-                            <div class="col-lg-6 col-sm-12">
+                            <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                	가격<input type="text" value="${itemVO.price}" id="priceInput">
+                                &nbsp;&nbsp;<strong>가격</strong><input type="text" value="${itemVO.price}" id="priceInput">
                               </fieldset>
                             </div>
-                            <div class="col-lg-6 col-sm-12">
+                            <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                	구매처<input type="text" value="${itemVO.store}" id="storeInput">
+                                &nbsp;&nbsp;<strong>구매처</strong><input type="text" value="${itemVO.store}" id="storeInput">
+                              </fieldset>
+                            </div>          
+                            
+                            <div class="col-lg-12" style="margin-top:10px">
+                              <fieldset>
+                                &nbsp;&nbsp;<strong>메모</strong><textarea name="memo" rows="3" id="memoText"></textarea>
                               </fieldset>
                             </div>
-                            <div class="col-md-6 col-sm-12">
-                              <fieldset>
-                                <select value="number-guests" name="number-guests" id="number-guests">
-                                    <option value="number-guests">Number Of Guests</option>
-                                    <option name="1" id="1">1</option>
-                                    <option name="2" id="2">2</option>
-                                    <option name="3" id="3">3</option>
-                                    <option name="4" id="4">4</option>
-                                    <option name="5" id="5">5</option>
-                                    <option name="6" id="6">6</option>
-                                    <option name="7" id="7">7</option>
-                                    <option name="8" id="8">8</option>
-                                    <option name="9" id="9">9</option>
-                                    <option name="10" id="10">10</option>
-                                    <option name="11" id="11">11</option>
-                                    <option name="12" id="12">12</option>
-                                </select>
-                              </fieldset>
-                            </div>
-                            <div class="col-lg-6">
-                                <div id="filterDate2">    
-                                  <div class="input-group date" data-date-format="dd/mm/yyyy">
-                                    <input  name="date" id="date" type="text" class="form-control" placeholder="dd/mm/yyyy">
-                                    <div class="input-group-addon" >
-                                      <span class="glyphicon glyphicon-th"></span>
-                                    </div>
-                                  </div>
-                                </div>   
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                              <fieldset>
-                                <select value="time" name="time" id="time">
-                                    <option value="time">Time</option>
-                                    <option name="Breakfast" id="Breakfast">Breakfast</option>
-                                    <option name="Lunch" id="Lunch">Lunch</option>
-                                    <option name="Dinner" id="Dinner">Dinner</option>
-                                </select>
-                              </fieldset>
-                            </div>
-                            <div class="col-lg-12">
-                              <fieldset>
-                                <textarea name="message" rows="6" id="message" placeholder="Message" required=""></textarea>
-                              </fieldset>
-                            </div>
-                            <div class="col-lg-12">
+                            <div class="col-lg-12" style="margin-top:10px">
                               <fieldset>
                                 <button type="button" id="modifyBtn" class="main-button-icon" 
                                 style="background-color:#cf565c; border-color:#cf565c">수정하기</button>
@@ -218,7 +195,30 @@
 			$('#navLogoutBtn').hide();
 		}else{
 			$('#navLoginBtn').hide();
-		}		
+		}
+		
+		//이미지태그 위에 마우스 올리면 문구 띄우기
+		$('[data-toggle="tooltip"]').tooltip();
+		
+		$('#file-area').hide();
+		$('#file-area').css('cursor', 'pointer');
+		//이미지영역 클릭하면 파일업로드 창 띄우기
+		$('#itemImg').click(function(){
+			$('#itemImg1').click();
+		});
 	});
+	
+	//이미지파일 미리보기
+	function loadImg(inputFile, num) {
+		if(inputFile.files.length==1){
+			let reader = new FileReader();
+			reader.readAsDataURL(inputFile.files[0]);
+			reader.onload = function(e){
+				$('#itemImg').attr('src', e.target.result);
+			}
+		}else{
+			$('#itemImg').attr('src', null);
+		}
+	}
 </script>
 </html>
