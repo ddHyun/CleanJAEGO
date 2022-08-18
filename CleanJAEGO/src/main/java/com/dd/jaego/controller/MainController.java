@@ -105,6 +105,13 @@ public class MainController {
 		return "join";
 	}
 	
+	//등록하기 페이지로 이동
+	@RequestMapping("/detail2")
+	public String goDetail2Page() {
+		logger.info("==========detail2Page==========");
+		return "detail";
+	}
+	
 	//수정하기 페이지로 이동
 	@RequestMapping(value="/detail", method=RequestMethod.GET)
 	public String goDetailPage(int idx, Model model) {

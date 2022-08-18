@@ -46,7 +46,7 @@
   	object-fit: contain;
   }  
   .tooltip-inner{
-  	background:#84482b;
+  	background:#cf565c;
   }  
 }
 </style>
@@ -124,19 +124,23 @@
                                     		</c:when>
                                     		<c:otherwise><option value="${category}">${category}</option></c:otherwise>
                                     	</c:choose>                                    	
-                                    </c:forEach>	                                    
+                                    </c:forEach>
+                                    	<option value="noName">기본</option>
+                                    	<option value="newCategory">[카테고리 추가]</option>
                                 </select>
                               </fieldset>
                             </div>
                             <input type="hidden" value="${itemVO.idx}">
-                            <div class="col-lg-6 col-sm-12" style="border-color:#cf565c; margin-top:10px">
+                            <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                &nbsp;&nbsp;<strong>제품명</strong><input type="text" value="${itemVO.item_name}" id="nameInput">
+                                &nbsp;&nbsp;<strong>제품명</strong><small style="color:#cf565c">(필수입력)</small>
+                                <input type="text" value="${itemVO.item_name}" id="nameInput">
                               </fieldset>
                             </div>
                               <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                &nbsp;&nbsp;<strong>총재고</strong><input type="text" value="${itemVO.stock}" id="stockInput">
+                                &nbsp;&nbsp;<strong>총재고</strong><small style="color:#cf565c">(필수입력)</small>
+                                <input type="text" value="${itemVO.stock}" id="stockInput">
                               </fieldset>
                             </div>
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
@@ -153,7 +157,7 @@
                               <fieldset>
                                 &nbsp;&nbsp;<strong>가격</strong><input type="text" value="${itemVO.price}" id="priceInput">
                               </fieldset>
-                            </div>
+                            </div>                           
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
                                 &nbsp;&nbsp;<strong>구매처</strong><input type="text" value="${itemVO.store}" id="storeInput">
@@ -162,13 +166,21 @@
                             
                             <div class="col-lg-12" style="margin-top:10px">
                               <fieldset>
-                                &nbsp;&nbsp;<strong>메모</strong><textarea name="memo" rows="3" id="memoText"></textarea>
+                                &nbsp;&nbsp;<strong>메모</strong><textarea name="memo" rows="3" id="memoText">${itemVO.memo}</textarea>
                               </fieldset>
                             </div>
                             <div class="col-lg-12" style="margin-top:10px">
                               <fieldset>
-                                <button type="button" id="modifyBtn" class="main-button-icon" 
-                                style="background-color:#cf565c; border-color:#cf565c">수정하기</button>
+                              <c:choose>
+	                              <c:when test="${not empty itemVO.idx}">
+	                                	<button type="button" id="modifyBtn" class="main-button-icon" 
+	                                	style="background-color:#cf565c; border-color:#cf565c">수정하기</button>
+	                              </c:when>
+	                              <c:otherwise>
+	                                	<button type="button" id="registerBtn" class="main-button-icon" 
+	                                	style="background-color:#cf565c; border-color:#cf565c">등록하기</button>
+	                              </c:otherwise>
+                              </c:choose>
                               </fieldset>
                             </div>
                           </div>
@@ -215,10 +227,73 @@
 			reader.readAsDataURL(inputFile.files[0]);
 			reader.onload = function(e){
 				$('#itemImg').attr('src', e.target.result);
+				console.log(e.target.result);
 			}
 		}else{
 			$('#itemImg').attr('src', null);
 		}
 	}
+	
+	//카테고리 추가하기
+	$('#categorySelect').change(function(){
+		if($(this).val()=='newCategory'){
+			let newCatagoryName = prompt('추가할 카테고리명을 입력해주세요', '').trim();
+			let option = '<option value="'+newCatagoryName+'">'+newCatagoryName+'</option>';
+			//카테고리 목록 맨 위에 추가하기
+			$('#categorySelect option:eq(0)').before(option);
+			//추가된 option값으로 화면에 표시하기
+			$(this).val(newCatagoryName).attr('selected', 'selected');
+		}
+	});
+	
+	//제품 등록하기
+	$('#registerBtn').click(function(){
+		let filename;
+		let category = $('#categorySelect option:selected').text();
+		let item_name = $.trim($('#nameInput').val());
+		let email = "${sessionScope.sessionEmail}";
+		let manufacture_date = $.trim($('#manufactureDateInput').val());
+		let expiry_date = $.trim($('#expiryDateInput').val());
+		let stock = $.trim($('#stockInput').val());
+		let price = $.trim($('#priceInput').val());		
+		let store = $.trim($('#storeInput').val());
+		let memo = $.trim($('#memoText').val());
+		
+		if(item_name==''){
+			alert('제품명을 입력해주세요');
+			return false;
+		}
+		if(stock==''){
+			alert('총재고 수량을 입력해주세요');
+			return false;
+		}
+		if(!/[0-9]/g.test(stock)){
+			alert('숫자만 입력 가능합니다');
+			$('#stockInput').val('');
+			$('#stockInput').focus();
+			return false;
+		}
+		//미입력시 '-'로 저장하기
+		if(manufacture_date==''){
+			manufacture_date = '-';
+		}
+		if(expiry_date==''){
+			expiry_date = '-';
+		}
+		if(price==''){
+			price = '-';
+		}
+		if(store==''){
+			store = '-';
+		}
+		if(memo==''){
+			memo = '-';
+		}
+		
+		alert('카테고리 : '+category+'\r\n제품명 : '+item_name+'\r\n이메일 : '+email
+				+'\r\n제조일자 : '+manufacture_date+'\r\n유통기한 : '+expiry_date
+				+'\r\n총재고 : '+stock+'\r\n가격 : '+price+'\r\n구매처 : '+store+'\r\n메모 : '+memo);
+	});
+	
 </script>
 </html>
