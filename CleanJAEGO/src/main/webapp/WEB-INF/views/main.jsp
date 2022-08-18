@@ -156,7 +156,7 @@
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="registerBtn">등록하기</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="detail2">등록하기</a></div>
                             </div>
                         </div>
                      </div>
@@ -223,7 +223,7 @@
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" id="registerBtn">등록하기</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="detail2">등록하기</a></div>
                             </div>
                         </div>
                      </div>
@@ -471,9 +471,5 @@
 		}
 	}	
 	
-	//등록하기버튼
-	$('#registerBtn').click(function(){
-		
-	});
 </script>
 </html>
