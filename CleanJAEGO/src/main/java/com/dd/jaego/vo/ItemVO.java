@@ -8,7 +8,14 @@ public class ItemVO {
 	private int idx, stock;
 	private long dateGap; //dateGap: 임박알림을 위한 날짜차이 저장용 변수
 	private String email, category, item_name, manufacture_date, expiry_date,
-					price, store, filename;
+					price, store, filename, memo;
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
 	private MultipartFile file; //업로드 사진	
 	
 	public ItemVO() {}	

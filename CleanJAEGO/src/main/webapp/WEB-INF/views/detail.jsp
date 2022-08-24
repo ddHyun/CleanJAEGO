@@ -96,11 +96,11 @@
         
         <!-- Section-->          
         <section class="py-5" style="background-color:#cfffe5">
-           <div class="container px-4 px-lg-5 mt-5">
-           <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+         <div class="container px-4 px-lg-5 mt-5">
+           <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center"> 
 			 <div class="col-lg-6" style="width:100%">
                     <div class="contact-form">
-                        <form id="contact" action="" method="post" enctype="multipart/form-data">
+                        <form id="contact" action="registerItem" method="post" enctype="multipart/form-data">
                           <div class="row">
                             <div class="col-md-6 col-sm-12" align="center">
                             <div>
@@ -111,11 +111,12 @@
                             	</a>
                             </div>
                             <div id="file-area">
-                            	<input type="file" id="itemImg1" onchange="loadImg(this,1)">
+                            	<input type="file" id="itemImg1" name="file" onchange="loadImg(this,1)">
                             </div>
                             </div>
                             <div class="col-md-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
+                                <input type="hidden" id="categoryInput">
                                 <select name="itemCategory" id="categorySelect">
                                     <c:forEach var="category" items="${categoryList}">
                                     	<c:choose>
@@ -134,33 +135,37 @@
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
                                 &nbsp;&nbsp;<strong>제품명</strong><small style="color:#cf565c">(필수입력)</small>
-                                <input type="text" value="${itemVO.item_name}" id="nameInput">
+                                <input type="text" value="${itemVO.item_name}" id="nameInput" name="item_name">
                               </fieldset>
                             </div>
                               <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
                                 &nbsp;&nbsp;<strong>총재고</strong><small style="color:#cf565c">(필수입력)</small>
-                                <input type="text" value="${itemVO.stock}" id="stockInput">
+                                <input type="text" value="${itemVO.stock}" id="stockInput" name="stock">
                               </fieldset>
                             </div>
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                              	&nbsp;&nbsp;<strong>제조일자</strong><input type="date" value="${itemVO.manufacture_date}" id="manufactureDateInput">
+                              	&nbsp;&nbsp;<strong>제조일자</strong>
+                              	<input type="date" value="${itemVO.manufacture_date}" id="manufactureDateInput" name="manufacture_date">
                             </fieldset>
                             </div>
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                              	&nbsp;&nbsp;<strong>유통기한</strong><input type="date" value="${itemVO.expiry_date}" id="expiryDateInput">
+                              	&nbsp;&nbsp;<strong>유통기한</strong>
+                              	<input type="date" value="${itemVO.expiry_date}" id="expiryDateInput" name="expiry_date">
                             </fieldset>
                             </div>
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                &nbsp;&nbsp;<strong>가격</strong><input type="text" value="${itemVO.price}" id="priceInput">
+                                &nbsp;&nbsp;<strong>가격</strong>
+                                <input type="text" value="${itemVO.price}" id="priceInput" name="price">
                               </fieldset>
                             </div>                           
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                &nbsp;&nbsp;<strong>구매처</strong><input type="text" value="${itemVO.store}" id="storeInput">
+                                &nbsp;&nbsp;<strong>구매처</strong>
+                                <input type="text" value="${itemVO.store}" id="storeInput" name="store">
                               </fieldset>
                             </div>          
                             
@@ -177,7 +182,7 @@
 	                                	style="background-color:#cf565c; border-color:#cf565c">수정하기</button>
 	                              </c:when>
 	                              <c:otherwise>
-	                                	<button type="button" id="registerBtn" class="main-button-icon" 
+	                                	<button type="submit" id="registerBtn" class="main-button-icon" 
 	                                	style="background-color:#cf565c; border-color:#cf565c">등록하기</button>
 	                              </c:otherwise>
                               </c:choose>
@@ -187,8 +192,9 @@
                         </form>
                     </div>
                 </div>
-                </div>
+             </div>
           </div>
+          
         </section>
         <!-- Footer-->
         <footer class="py-5 bg-dark" style="margin-top:0px">
@@ -227,7 +233,6 @@
 			reader.readAsDataURL(inputFile.files[0]);
 			reader.onload = function(e){
 				$('#itemImg').attr('src', e.target.result);
-				console.log(e.target.result);
 			}
 		}else{
 			$('#itemImg').attr('src', null);
@@ -248,52 +253,66 @@
 	
 	//제품 등록하기
 	$('#registerBtn').click(function(){
-		let filename;
-		let category = $('#categorySelect option:selected').text();
-		let item_name = $.trim($('#nameInput').val());
-		let email = "${sessionScope.sessionEmail}";
-		let manufacture_date = $.trim($('#manufactureDateInput').val());
-		let expiry_date = $.trim($('#expiryDateInput').val());
-		let stock = $.trim($('#stockInput').val());
-		let price = $.trim($('#priceInput').val());		
-		let store = $.trim($('#storeInput').val());
-		let memo = $.trim($('#memoText').val());
+		let categoryText = $('#categorySelect option:selected').text();
+		$('#categoryInput').val(categoryText);
+		let categoryVal = $('#categoryInput').val();
+		let item_nameVal = $.trim($('#nameInput').val());
+		let manufacture_dateVal = $.trim($('#manufactureDateInput').val());
+		let expiry_dateVal = $.trim($('#expiryDateInput').val());
+		let stockVal = $.trim($('#stockInput').val());
+		let priceVal = $.trim($('#priceInput').val());		
+		let storeVal = $.trim($('#storeInput').val());
+		let memoVal = $.trim($('#memoText').val());
 		
-		if(item_name==''){
+		if(item_nameVal==''){
 			alert('제품명을 입력해주세요');
 			return false;
 		}
-		if(stock==''){
+		if(stockVal==''){
 			alert('총재고 수량을 입력해주세요');
 			return false;
-		}
-		if(!/[0-9]/g.test(stock)){
+		} 
+		if(!/[0-9]/g.test(stockVal)){
 			alert('숫자만 입력 가능합니다');
 			$('#stockInput').val('');
 			$('#stockInput').focus();
 			return false;
-		}
-		//미입력시 '-'로 저장하기
-		if(manufacture_date==''){
-			manufacture_date = '-';
-		}
-		if(expiry_date==''){
-			expiry_date = '-';
-		}
-		if(price==''){
-			price = '-';
-		}
-		if(store==''){
-			store = '-';
-		}
-		if(memo==''){
-			memo = '-';
-		}
+		}		
 		
-		alert('카테고리 : '+category+'\r\n제품명 : '+item_name+'\r\n이메일 : '+email
-				+'\r\n제조일자 : '+manufacture_date+'\r\n유통기한 : '+expiry_date
-				+'\r\n총재고 : '+stock+'\r\n가격 : '+price+'\r\n구매처 : '+store+'\r\n메모 : '+memo);
-	});
-	
+		//FormData 객체 생성
+	 	let formData = new FormData();
+		//data에 json형태로 저장
+		let data = {
+				"category":categoryVal,
+				"item_name":item_nameVal,
+				"manufacture_date":manufacture_dateVal,
+				"expiry_date":expiry_dateVal,
+				"stock":stockVal,
+				"price":priceVal,
+				"store":storeVal,
+				"memo":memoVal
+		};
+		
+		alert("text : "+categoryText+"\r\nval: "+categoryVal);
+		
+	 	//vo라는 이름으로 data를 formData에 append, type은 json
+	 	//Blob: 바이너리 형태로 큰 객체(이미지, 사운드, 비디오 등)를 저장
+	 	formData.append("vo", new Blob([json.stringify(data)], {type:"application/json"}));
+		
+		$.ajax({
+			url:"registerItem",
+			data:formData,
+			enctype:"multipart/form-data",
+			processdata:false,  /* false로 선언시 formData를 String으로 변환하지 않음 */
+			contenttype:false, /* false로 선언시 content-type 헤더가 multipart/form-data로 전송하게 됨 */
+			type:"post"
+		}).done(function(data){
+			
+		}).fail(function(){
+			
+		}); 
+		
+		
+	});	
 </script>
 </html>

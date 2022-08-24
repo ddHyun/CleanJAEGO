@@ -42,6 +42,11 @@ public class ItemService {
 	public ArrayList<String> getCategory(String email) {
 		return itemMapper.getCategory(email);
 	}
+
+	//제품 추가하기
+	public int insertItem(ItemVO vo) {
+		return itemMapper.insertItem(vo);
+	}
 	
 
 }
