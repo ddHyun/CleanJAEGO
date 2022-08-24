@@ -30,4 +30,7 @@ public interface ItemMapper {
 	//모든카테고리 목록 가져오기
 	@Select("SELECT DISTINCT category FROM JGITEM j WHERE email=#{email}")
 	public ArrayList<String> getCategory(String email);
+
+	//제품 추가하기
+	public int insertItem(ItemVO vo);
 }

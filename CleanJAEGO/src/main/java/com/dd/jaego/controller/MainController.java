@@ -22,6 +22,7 @@ import com.dd.jaego.main.MainService;
 import com.dd.jaego.vo.ItemVO;
 import com.dd.jaego.vo.UserVO;
 
+
 @Controller
 public class MainController {
 
@@ -103,33 +104,7 @@ public class MainController {
 	public String goJoinPage() {
 		logger.info("==========joinPage==========");
 		return "join";
-	}
-	
-	//등록하기 페이지로 이동
-	@RequestMapping("/detail2")
-	public String goDetail2Page() {
-		logger.info("==========detail2Page==========");
-		return "detail";
-	}
-	
-	//수정하기 페이지로 이동
-	@RequestMapping(value="/detail", method=RequestMethod.GET)
-	public String goDetailPage(int idx, Model model) {
-		logger.info("==========detailPage==========");
-		String email = (String)session.getAttribute("sessionEmail");
-		ItemVO itemVO = new ItemVO();
-		itemVO.setEmail(email);
-		itemVO.setIdx(idx);
-		
-		//선택항목 내용조회
-		ItemVO itemVO2 = itemService.showDetail(itemVO);	
-		//모든카테고리 목록 가져오기
-		ArrayList<String> categoryList = itemService.getCategory(email);
-		
-		model.addAttribute("itemVO", itemVO2);
-		model.addAttribute("categoryList", categoryList);
-		return "detail";
-	}
+	}	
 	
 	//전체회원목록 가져오기
 	public ArrayList<UserVO> showuserList(){

@@ -12,4 +12,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<delete id="deleteItem" parameterType="itemVO">
 		delete from jgitem where email=#{email} and idx=#{idx}
 	</delete>
+	
+	<insert id="insertItem" parameterType="itemVO">
+		insert into jgitem values(
+			item_idx.nextval,
+			#{email}, #{category}, #{item_name}, #{manufacture_date},
+			#{expiry_date}, #{price}, ${store}, #{stock}, #{filename}, #{memo}
+		)
+	</insert>
 </mapper>
