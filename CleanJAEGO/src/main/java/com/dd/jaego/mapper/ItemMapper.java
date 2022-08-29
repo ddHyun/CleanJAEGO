@@ -32,5 +32,6 @@ public interface ItemMapper {
 	public ArrayList<String> getCategory(String email);
 
 	//제품 추가하기
-	public int insertItem(ItemVO vo);
+	public int insertItem(ItemVO itemVO);
+	
 }

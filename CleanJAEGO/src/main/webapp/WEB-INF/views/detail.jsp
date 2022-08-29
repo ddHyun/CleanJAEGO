@@ -100,14 +100,28 @@
            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center"> 
 			 <div class="col-lg-6" style="width:100%">
                     <div class="contact-form">
-                        <form id="contact" action="registerItem" method="post" enctype="multipart/form-data">
+                        <form id="contact" action="" method="post" enctype="multipart/form-data">
                           <div class="row">
                             <div class="col-md-6 col-sm-12" align="center">
                             <div>
                             	<!-- 이미지태그 위에 마우스 올리면 문구 띄우기 -->
                             	<a data-toggle="tooltip" title="사진을 등록하려면 클릭!">
                             		<!-- 이미지 -->
-                            		<img width="50%" height="100%" id="itemImg">
+                            		<c:choose>
+	                            		<c:when test="${not empty itemVO.idx}">
+	                            		<c:choose>
+			                            	<c:when test="${itemVO.filename != 'noImage.png'}">
+					                            <img width="50%" height="100%" id="itemImg" src="${pageContext.request.contextPath}/resources/upload/${itemVO.foldername}/${itemVO.filename}" alt="..." />
+			                            	</c:when>
+			                            	<c:otherwise>
+			                            		<img width="50%" height="100%" id="itemImg" src="${pageContext.request.contextPath}/resources/upload/${itemVO.filename}" alt="..." />
+			                            	</c:otherwise>
+			                            </c:choose>
+			                            </c:when>
+		                            	<c:when test="${empty itemVO.idx}">
+		                            		<img width="50%" height="100%" id="itemImg" />
+		                            	</c:when>
+		                            </c:choose>
                             	</a>
                             </div>
                             <div id="file-area">
@@ -116,7 +130,8 @@
                             </div>
                             <div class="col-md-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
-                                <input type="hidden" id="categoryInput">
+                              <!-- category 파라미터 담기 위한 input태그  -->
+                                <input type="hidden" id="categoryInput" name="categoryInput">
                                 <select name="itemCategory" id="categorySelect">
                                     <c:forEach var="category" items="${categoryList}">
                                     	<c:choose>
@@ -126,7 +141,7 @@
                                     		<c:otherwise><option value="${category}">${category}</option></c:otherwise>
                                     	</c:choose>                                    	
                                     </c:forEach>
-                                    	<option value="noName">기본</option>
+                                    	<c:if test="${empty itemVO.idx}"><option value="noName">기본</option></c:if>
                                     	<option value="newCategory">[카테고리 추가]</option>
                                 </select>
                               </fieldset>
@@ -135,25 +150,39 @@
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
                                 &nbsp;&nbsp;<strong>제품명</strong><small style="color:#cf565c">(필수입력)</small>
-                                <input type="text" value="${itemVO.item_name}" id="nameInput" name="item_name">
+                                <input type="text" value="${itemVO.item_name}" id="nameInput" name="item_name" maxlength="20" required>
                               </fieldset>
                             </div>
                               <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
                                 &nbsp;&nbsp;<strong>총재고</strong><small style="color:#cf565c">(필수입력)</small>
-                                <input type="text" value="${itemVO.stock}" id="stockInput" name="stock">
+                                <input type="number" value="${itemVO.stock}" id="stockInput" name="stock" required>
                               </fieldset>
                             </div>
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
                               	&nbsp;&nbsp;<strong>제조일자</strong>
-                              	<input type="date" value="${itemVO.manufacture_date}" id="manufactureDateInput" name="manufacture_date">
+                              	<c:choose>
+                              		<c:when test="${itemVO.manufacture_date ne '-'}">
+		                              	<input type="date" value="${itemVO.manufacture_date}" id="manufactureDateInput" name="manufacture_date">
+                              		</c:when>
+                              		<c:otherwise>
+                              			<input type="date" value="" id="manufactureDateInput" name="manufacture_date">
+                              		</c:otherwise>
+                              	</c:choose>
                             </fieldset>
                             </div>
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
                               <fieldset>
                               	&nbsp;&nbsp;<strong>유통기한</strong>
-                              	<input type="date" value="${itemVO.expiry_date}" id="expiryDateInput" name="expiry_date">
+                              	<c:choose>
+                              		<c:when test="${itemVO.expiry_date ne '-'}">
+		                              	<input type="date" value="${itemVO.expiry_date}" id="expiryDateInput" name="expiry_date">
+                              		</c:when>
+                              		<c:otherwise>
+                              			<input type="date" value="" id="expiryDateInput" name="expiry_date">
+                              		</c:otherwise>
+                              	</c:choose>
                             </fieldset>
                             </div>
                             <div class="col-lg-6 col-sm-12" style="margin-top:10px">
@@ -178,11 +207,11 @@
                               <fieldset>
                               <c:choose>
 	                              <c:when test="${not empty itemVO.idx}">
-	                                	<button type="button" id="modifyBtn" class="main-button-icon" 
+	                                	<button type="button" id="modifyBtn" class="main-button-icon"
 	                                	style="background-color:#cf565c; border-color:#cf565c">수정하기</button>
 	                              </c:when>
 	                              <c:otherwise>
-	                                	<button type="submit" id="registerBtn" class="main-button-icon" 
+	                                	<button type="button" id="registerBtn" class="main-button-icon"
 	                                	style="background-color:#cf565c; border-color:#cf565c">등록하기</button>
 	                              </c:otherwise>
                               </c:choose>
@@ -251,18 +280,54 @@
 		}
 	});
 	
-	//제품 등록하기
-	$('#registerBtn').click(function(){
+	
+	$('#modifyBtn').click(function(e){
+		validateItem();
+		/* let으로 하면 오류남 */
+		var form = $('#contact')[0];
+		let formData = new FormData(form);		
+		$.ajax({
+			url:'modifyItem',
+			data:formData,
+			type:'post',
+			contentType:false,
+			processData:false
+		}).done(function(data){
+			alert(success);
+		});
+	});
+	
+	//등록하기 버튼 클릭시 select option값 input에 넣기
+	$('#registerBtn').click(function(){		
+		validateItem();
+		var form = $('#contact')[0];
+		let formData = new FormData(form);
+		$.ajax({
+			url:'registerItem',
+			data:formData,
+			type:'post',
+			contentType:false,
+			processData:false
+		}).done(function(data){
+			let json = (new Function('return'+data))();
+			if(json[0].result=='1'){
+				alert('등록되었습니다');
+			}
+		});
+	});
+	
+	//유효성 검사	
+	function validateItem() {
 		let categoryText = $('#categorySelect option:selected').text();
 		$('#categoryInput').val(categoryText);
-		let categoryVal = $('#categoryInput').val();
+		
 		let item_nameVal = $.trim($('#nameInput').val());
-		let manufacture_dateVal = $.trim($('#manufactureDateInput').val());
-		let expiry_dateVal = $.trim($('#expiryDateInput').val());
 		let stockVal = $.trim($('#stockInput').val());
+		/* let manufacture_dateVal = $.trim($('#manufactureDateInput').val());
+		let expiry_dateVal = $.trim($('#expiryDateInput').val());
 		let priceVal = $.trim($('#priceInput').val());		
 		let storeVal = $.trim($('#storeInput').val());
-		let memoVal = $.trim($('#memoText').val());
+		let memoVal = $.trim($('#memoText').val()); */
 		
 		if(item_nameVal==''){
 			alert('제품명을 입력해주세요');
@@ -277,42 +342,9 @@
 			$('#stockInput').val('');
 			$('#stockInput').focus();
 			return false;
-		}		
-		
-		//FormData 객체 생성
-	 	let formData = new FormData();
-		//data에 json형태로 저장
-		let data = {
-				"category":categoryVal,
-				"item_name":item_nameVal,
-				"manufacture_date":manufacture_dateVal,
-				"expiry_date":expiry_dateVal,
-				"stock":stockVal,
-				"price":priceVal,
-				"store":storeVal,
-				"memo":memoVal
-		};
-		
-		alert("text : "+categoryText+"\r\nval: "+categoryVal);
-		
-	 	//vo라는 이름으로 data를 formData에 append, type은 json
-	 	//Blob: 바이너리 형태로 큰 객체(이미지, 사운드, 비디오 등)를 저장
-	 	formData.append("vo", new Blob([json.stringify(data)], {type:"application/json"}));
-		
-		$.ajax({
-			url:"registerItem",
-			data:formData,
-			enctype:"multipart/form-data",
-			processdata:false,  /* false로 선언시 formData를 String으로 변환하지 않음 */
-			contenttype:false, /* false로 선언시 content-type 헤더가 multipart/form-data로 전송하게 됨 */
-			type:"post"
-		}).done(function(data){
-			
-		}).fail(function(){
-			
-		}); 
-		
-		
-	});	
+		}	
+	}
+	
+	
 </script>
 </html>
