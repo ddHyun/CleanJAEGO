@@ -8,14 +8,8 @@ public class ItemVO {
 	private int idx, stock;
 	private long dateGap; //dateGap: 임박알림을 위한 날짜차이 저장용 변수
 	private String email, category, item_name, manufacture_date, expiry_date,
-					price, store, filename, memo;
-	public String getMemo() {
-		return memo;
-	}
-
-	public void setMemo(String memo) {
-		this.memo = memo;
-	}
+					price, store, filename, memo, foldername; //foldername : 파일을 폴더별로 저장할 때 사용
+	
 	private MultipartFile file; //업로드 사진	
 	
 	public ItemVO() {}	
@@ -29,6 +23,13 @@ public class ItemVO {
 		this.filename = filename;
 	}
 
+	public String getMemo() {
+		return memo;
+	}
+	
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
 	public int getIdx() {
 		return idx;
 	}
@@ -101,4 +102,10 @@ public class ItemVO {
 	public void setDateGap(long dateGap) {
 		this.dateGap = dateGap;
 	}		
+	public String getFoldername() {
+		return foldername;
+	}
+	public void setFoldername(String foldername) {
+		this.foldername = foldername;
+	}
 }

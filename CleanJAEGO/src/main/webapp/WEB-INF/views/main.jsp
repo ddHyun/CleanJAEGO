@@ -103,7 +103,14 @@
                         		<div class="badge bg-dark text-white position-absolute" style="top: 12.8rem; right: 0.5rem">임박!!</div>
                         	</c:if>
                             <!-- Product image-->
-                            <img class="card-img-top" src="resources/assets/noImage.png" alt="..." />
+                            <c:choose>
+                            	<c:when test="${item.filename ne 'noImage.png'}">
+		                            <img class="card-img-top" src="${pageContext.request.contextPath}/resources/upload/${item.foldername}/${item.filename}" alt="..." />
+                            	</c:when>
+                            	<c:otherwise>
+                            		<img class="card-img-top" src="${pageContext.request.contextPath}/resources/upload/${item.filename}" alt="..." />
+                            	</c:otherwise>
+                            </c:choose>
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -142,7 +149,7 @@
                    <div class="col mb-5">
                    		<div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" src="resources/assets/noImage.png" alt="..." />
+                            <img class="card-img-top" src="${pageContext.request.contextPath}/resources/upload/noImage.png" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -172,7 +179,7 @@
                         		<div class="badge bg-dark text-white position-absolute" style="top: 12.8rem; right: 0.5rem">임박!!</div>
                         	</c:if>                       
                             <!-- Product image-->
-                            <img class="card-img-top" src="resources/assets/${item.filename }" alt="..." />
+                            <img class="card-img-top" src="${pageContext.request.contextPath}/resources/upload/sample/${item.filename}" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -209,7 +216,7 @@
                     <div class="col mb-5">
                    		<div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top" src="resources/assets/noImage.png" alt="..." />
+                            <img class="card-img-top" src="${pageContext.request.contextPath}/resources/upload/noImage.png" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -443,8 +450,7 @@
 	//수정하기
 	function showDetail(index) {
 		location.href='detail?idx='+index;
-	}
-	
+	}	
 	
 	//삭제하기
 	function deleteItem(index) {

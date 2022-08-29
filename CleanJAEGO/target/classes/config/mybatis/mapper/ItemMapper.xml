@@ -17,7 +17,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		insert into jgitem values(
 			item_idx.nextval,
 			#{email}, #{category}, #{item_name}, #{manufacture_date},
-			#{expiry_date}, #{price}, ${store}, #{stock}, #{filename}, #{memo}
+			#{expiry_date}, #{price}, #{store}, #{stock}, #{filename}, #{memo}, #{foldername}
 		)
 	</insert>
+	
 </mapper>

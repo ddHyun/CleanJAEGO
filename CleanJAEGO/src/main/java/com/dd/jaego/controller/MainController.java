@@ -152,7 +152,7 @@ public class MainController {
 		itemVO.setIdx(idx);
 		resultNum = itemService.deleteItem(itemVO);
 		
-		String result = String.format("[{'resultNum':'%s'}]", ""+resultNum);
+		String result = String.format("[{'resultNum':'%d'}]", resultNum);
 		return result;
 	}
 	
@@ -213,7 +213,7 @@ public class MainController {
 		//회원추가
 		res = mainService.insertUser(vo);
 		
-		String result = String.format("[{'res':'%s'}]", res);
+		String result = String.format("[{'res':'%s'}]", ""+res);
 		
 		return result;
 	}

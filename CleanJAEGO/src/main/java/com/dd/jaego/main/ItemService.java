@@ -44,8 +44,8 @@ public class ItemService {
 	}
 
 	//제품 추가하기
-	public int insertItem(ItemVO vo) {
-		return itemMapper.insertItem(vo);
+	public int insertItem(ItemVO itemVO) {
+		return itemMapper.insertItem(itemVO);
 	}
 	
 

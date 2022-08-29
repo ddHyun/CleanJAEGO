@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -66,25 +67,20 @@ public class DetailController {
 		model.addAttribute("itemVO", itemVO2);
 		model.addAttribute("categoryList", categoryList);
 		return "detail";
-	}
-		
-	
-	//이미지파일 포함한 제품등록하기
-	@RequestMapping(value="/registerItem", method=RequestMethod.POST)
-	public void registerItem(ItemVO vo, @RequestParam(value="file", required=false)MultipartFile file, MultipartHttpServletRequest mr) throws Exception {
-		
-		String email = (String)session.getAttribute("sessionEmail");
+	}		
 
+	//제품 등록하기
+	@ResponseBody
+	@RequestMapping(value="/registerItem", method=RequestMethod.POST)
+	public String registerItem(ItemVO vo, @RequestParam("categoryInput")String category) throws Exception{
 		//파일 저장위치 설정
 		String currDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));//현재날짜
 		String webPath = "/resources/upload/"; //절대경로
 		String savePath = request.getSession().getServletContext().getRealPath(webPath);//상대경로
 		
-		//upload/ooo.jpg로 연결하기
-		file = mr.getFile("file");
 		String filename = "noImage.png";
+		MultipartFile file = vo.getFile();
 		
-		//업로드된 파일이 있을 경우 
 		if(!file.isEmpty()) {
 			//업로드된 실제파일명
 			filename = file.getOriginalFilename();
@@ -100,17 +96,16 @@ public class DetailController {
 			//파일을 복사해서 전송하기
 			file.transferTo(saveFile);
 		}
-		
-		
 		vo.setFilename(filename);
-		vo.setEmail(email);
+		vo.setFoldername(currDate);
+		vo.setCategory(category);
+		vo.setEmail((String)session.getAttribute("sessionEmail"));
 		
-		//미입력시 '-'로 저장하기
-		if(vo.getExpiry_date().equals("")) {
-			vo.setExpiry_date("-");
-		}
 		if(vo.getManufacture_date().equals("")) {
 			vo.setManufacture_date("-");
+		}
+		if(vo.getExpiry_date().equals("")) {
+			vo.setExpiry_date("-");
 		}
 		if(vo.getMemo().equals("")) {
 			vo.setMemo("-");
@@ -121,14 +116,22 @@ public class DetailController {
 		if(vo.getPrice().equals("")) {
 			vo.setPrice("-");
 		}
-
 		
-//		System.out.println(item_name+"\r\n"+store+"\r\n"+manufacture_date+"\r\n"+expiry_date+"\r\n"+price+"\r\n"+memo+"\r\n"+email+"\r\n"+file+"\r\n"+stock);
-		System.out.println(vo.getItem_name()+"\r\n"+vo.getStore()+"\r\n"+vo.getManufacture_date()+"\r\n"+vo.getFilename()
-		+"\r\n"+vo.getExpiry_date()+"\r\n"+vo.getPrice()+"\r\n"+vo.getMemo()+"\r\n"+vo.getStock()+"\r\n"+vo.getCategory());
-		
-		//logger.info("=========="+vo.getCategory()+"\r\n"+vo.getItem_name()+"\r\n"+vo.getStock()+"===========");
-
+		int res = itemService.insertItem(vo);	
+		String result = String.format("[{'result':'%d'}]", res);
+		return result;
 	}
 	
+	@ResponseBody
+	@RequestMapping(value="/modifyItem", method=RequestMethod.POST)
+	public String modifyItem(ItemVO vo) {
+		vo.setEmail((String)session.getAttribute("sessionEmail"));
+		ItemVO dbVO = itemService.showDetail(vo);
+		if(dbVO.getItem_name().equals(vo.getItem_name())) {
+			System.out.println("변동없음");
+		}else {
+			System.out.println("item_name: "+vo.getItem_name());
+		}
+		return "re";
+	}
 }
