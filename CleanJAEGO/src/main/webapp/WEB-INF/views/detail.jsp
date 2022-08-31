@@ -94,13 +94,14 @@
             </div>
         </header>
         
-        <!-- Section-->          
+        <!-- Section-->             
         <section class="py-5" style="background-color:#cfffe5">
          <div class="container px-4 px-lg-5 mt-5">
            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center"> 
 			 <div class="col-lg-6" style="width:100%">
                     <div class="contact-form">
                         <form id="contact" action="" method="post" enctype="multipart/form-data">
+                        <input type="hidden" value="${itemVO.idx}" name="idx">
                           <div class="row">
                             <div class="col-md-6 col-sm-12" align="center">
                             <div>
@@ -293,7 +294,7 @@
 			contentType:false,
 			processData:false
 		}).done(function(data){
-			alert(success);
+			alert(data);
 		});
 	});
 	

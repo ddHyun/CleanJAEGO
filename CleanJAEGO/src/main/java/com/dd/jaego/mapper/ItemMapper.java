@@ -33,5 +33,8 @@ public interface ItemMapper {
 
 	//제품 추가하기
 	public int insertItem(ItemVO itemVO);
+
+	//제품내용 수정하기
+	public int updateItemInfo(ItemVO itemVO);
 	
 }
