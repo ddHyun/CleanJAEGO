@@ -122,16 +122,96 @@ public class DetailController {
 		return result;
 	}
 	
+	//제품내용 수정하기
 	@ResponseBody
 	@RequestMapping(value="/modifyItem", method=RequestMethod.POST)
-	public String modifyItem(ItemVO vo) {
+	public String modifyItem(ItemVO vo, @RequestParam("categoryInput")String category) throws Exception{
 		vo.setEmail((String)session.getAttribute("sessionEmail"));
+		vo.setCategory(category);		
+		
+		//idx에 해당하는 제품정보 가져오기
 		ItemVO dbVO = itemService.showDetail(vo);
-		if(dbVO.getItem_name().equals(vo.getItem_name())) {
-			System.out.println("변동없음");
-		}else {
-			System.out.println("item_name: "+vo.getItem_name());
+		
+		boolean check = false;//db에 저장된 내용과 수정페이지에 적힌 내용의 일치 유무 확인용 변수
+		
+		if(!dbVO.getCategory().equals(vo.getCategory())) {
+			check = true; //내용이 바꼈으면 true
 		}
-		return "re";
+		if(!dbVO.getItem_name().equals(vo.getItem_name())) {
+			check = true;
+		}
+		if(dbVO.getStock()!=vo.getStock()) {
+			check = true;
+		}
+		if(!dbVO.getManufacture_date().equals(vo.getManufacture_date())) {
+			check = true;
+		}
+		if(!dbVO.getExpiry_date().equals(vo.getExpiry_date())) {
+			check = true;
+		}
+		if(!dbVO.getPrice().equals(vo.getPrice())) {
+			check = true;
+		}
+		if(!dbVO.getStore().equals(vo.getStore())) {
+			check = true;
+		}
+		if(!dbVO.getMemo().equals(vo.getMemo())) {
+			check = true;
+		}
+		
+		makeNotNull(vo);
+		
+		String currDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));//현재날짜
+		String webPath = "/resources/upload/"; //절대경로
+		String savePath = request.getSession().getServletContext().getRealPath(webPath);//상대경로
+		
+		String filename = "noImage.png";
+		MultipartFile file = vo.getFile();
+		
+		if(!file.isEmpty()) {
+			//업로드된 실제파일명
+			filename = file.getOriginalFilename();
+			File saveFile = new File(savePath+currDate, filename);//파일을 날짜별로 그룹지어 보관하기
+			if(!saveFile.exists()) {//upload폴더가 없으면 생성 
+				saveFile.mkdirs();
+			}else {
+				//파일명 중복방지
+				long time = System.currentTimeMillis();
+				filename = String.format("%d_%s", time, filename);
+				saveFile = new File(savePath+currDate, filename);
+			}
+			//파일을 복사해서 전송하기
+			file.transferTo(saveFile);
+		}
+		vo.setFilename(filename);
+		vo.setFoldername(currDate);
+		
+		int res = 0; 
+		if(check) {
+			res = itemService.updateItemInfo(vo);
+		}
+		
+		String result = String.format("[{'result':'%d'}]", res);
+		
+		return result;
 	}
+	
+	//입력칸 공백 채우기
+	public void makeNotNull(ItemVO vo) {
+		if(vo.getManufacture_date().equals("")) {
+			vo.setManufacture_date("-");
+		}
+		if(vo.getExpiry_date().equals("")) {
+			vo.setExpiry_date("-");
+		}
+		if(vo.getMemo().equals("")) {
+			vo.setMemo("-");
+		}
+		if(vo.getStore().equals("")) {
+			vo.setStore("-");
+		}
+		if(vo.getPrice().equals("")) {
+			vo.setPrice("-");
+		}
+	}	
 }

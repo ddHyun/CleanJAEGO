@@ -47,6 +47,11 @@ public class ItemService {
 	public int insertItem(ItemVO itemVO) {
 		return itemMapper.insertItem(itemVO);
 	}
+
+	//제품내용 수정하기
+	public int updateItemInfo(ItemVO itemVO) {
+		return itemMapper.updateItemInfo(itemVO);
+	}
 	
 
 }

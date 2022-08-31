@@ -13,6 +13,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		delete from jgitem where email=#{email} and idx=#{idx}
 	</delete>
 	
+	<!-- 제품 등록하기 -->
 	<insert id="insertItem" parameterType="itemVO">
 		insert into jgitem values(
 			item_idx.nextval,
@@ -20,5 +21,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{expiry_date}, #{price}, #{store}, #{stock}, #{filename}, #{memo}, #{foldername}
 		)
 	</insert>
+	
+	<!-- 제품내용 수정하기 -->
+	<update id="updateItemInfo" parameterType="itemVO">
+		update jgitem set 
+				category=#{category}, item_name=#{item_name}, manufacture_date=#{manufacture_date},
+				expiry_date=#{expiry_date}, price=#{price}, store=#{store}, stock=#{stock}, 
+				filename=#{filename}, memo=#{memo}, foldername=#{foldername}
+		where idx=#{idx}
+	</update>
 	
 </mapper>
