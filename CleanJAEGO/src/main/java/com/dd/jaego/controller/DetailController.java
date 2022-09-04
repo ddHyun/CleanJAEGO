@@ -1,11 +1,11 @@
 package com.dd.jaego.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.dd.jaego.main.ItemService;
 import com.dd.jaego.main.MainService;
@@ -45,8 +44,15 @@ public class DetailController {
 	
 	//등록하기 페이지로 이동
 	@RequestMapping("/detail2")
-	public String goDetail2Page() {
+	public String goDetail2Page(Model model) {
 		logger.info("==========detail2Page==========");
+		String email = (String)session.getAttribute("sessionEmail");
+		int res = itemService.checkItemList(email);
+		if(res!=0) { //등록하기 페이지 내 기존 카테고리 목록이 있다면 불러오기
+			List<String> categoryList1 = itemService.getCategory(email);
+			model.addAttribute("categoryList", categoryList1);
+			model.addAttribute("res", res);
+		}
 		return "detail";
 	}
 	
@@ -73,50 +79,17 @@ public class DetailController {
 	@ResponseBody
 	@RequestMapping(value="/registerItem", method=RequestMethod.POST)
 	public String registerItem(ItemVO vo, @RequestParam("categoryInput")String category) throws Exception{
+		
 		//파일 저장위치 설정
-		String currDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));//현재날짜
-		String webPath = "/resources/upload/"; //절대경로
-		String savePath = request.getSession().getServletContext().getRealPath(webPath);//상대경로
+		setFilename(vo);
 		
-		String filename = "noImage.png";
-		MultipartFile file = vo.getFile();
-		
-		if(!file.isEmpty()) {
-			//업로드된 실제파일명
-			filename = file.getOriginalFilename();
-			File saveFile = new File(savePath+currDate, filename);//파일을 날짜별로 그룹지어 보관하기
-			if(!saveFile.exists()) {//upload폴더가 없으면 생성 
-				saveFile.mkdirs();
-			}else {
-				//파일명 중복방지
-				long time = System.currentTimeMillis();
-				filename = String.format("%d_%s", time, filename);
-				saveFile = new File(savePath+currDate, filename);
-			}
-			//파일을 복사해서 전송하기
-			file.transferTo(saveFile);
-		}
-		vo.setFilename(filename);
-		vo.setFoldername(currDate);
 		vo.setCategory(category);
 		vo.setEmail((String)session.getAttribute("sessionEmail"));
 		
-		if(vo.getManufacture_date().equals("")) {
-			vo.setManufacture_date("-");
-		}
-		if(vo.getExpiry_date().equals("")) {
-			vo.setExpiry_date("-");
-		}
-		if(vo.getMemo().equals("")) {
-			vo.setMemo("-");
-		}
-		if(vo.getStore().equals("")) {
-			vo.setStore("-");
-		}
-		if(vo.getPrice().equals("")) {
-			vo.setPrice("-");
-		}
+		//입력시 공백은 '-'로 저장하기
+		makeNotNull(vo);
 		
+		//DB에 제품내용 저장하기
 		int res = itemService.insertItem(vo);	
 		String result = String.format("[{'result':'%d'}]", res);
 		return result;
@@ -126,11 +99,15 @@ public class DetailController {
 	@ResponseBody
 	@RequestMapping(value="/modifyItem", method=RequestMethod.POST)
 	public String modifyItem(ItemVO vo, @RequestParam("categoryInput")String category) throws Exception{
+		
 		vo.setEmail((String)session.getAttribute("sessionEmail"));
 		vo.setCategory(category);		
 		
 		//idx에 해당하는 제품정보 가져오기
 		ItemVO dbVO = itemService.showDetail(vo);
+		
+		//입력칸 공백시 '-'로 저장하기
+		makeNotNull(vo);
 		
 		boolean check = false;//db에 저장된 내용과 수정페이지에 적힌 내용의 일치 유무 확인용 변수
 		
@@ -159,35 +136,23 @@ public class DetailController {
 			check = true;
 		}
 		
-		makeNotNull(vo);
-		
-		String currDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));//현재날짜
-		String webPath = "/resources/upload/"; //절대경로
-		String savePath = request.getSession().getServletContext().getRealPath(webPath);//상대경로
-		
-		String filename = "noImage.png";
+		//수정페이지 내 이미지파일명 가져오기
 		MultipartFile file = vo.getFile();
+		String imgFilename = file.getOriginalFilename();
 		
-		if(!file.isEmpty()) {
-			//업로드된 실제파일명
-			filename = file.getOriginalFilename();
-			File saveFile = new File(savePath+currDate, filename);//파일을 날짜별로 그룹지어 보관하기
-			if(!saveFile.exists()) {//upload폴더가 없으면 생성 
-				saveFile.mkdirs();
-			}else {
-				//파일명 중복방지
-				long time = System.currentTimeMillis();
-				filename = String.format("%d_%s", time, filename);
-				saveFile = new File(savePath+currDate, filename);
-			}
-			//파일을 복사해서 전송하기
-			file.transferTo(saveFile);
+		if(imgFilename.equals("")) { //이미지파일 변경 없을 경우
+			vo.setFilename(dbVO.getFilename());
+			vo.setFoldername(dbVO.getFoldername());
+		}else { //이미지파일 변경시
+			setFilename(vo);
 		}
-		vo.setFilename(filename);
-		vo.setFoldername(currDate);
+
+		if(!dbVO.getFilename().equals(vo.getFilename())) {
+			check=true;
+		}
 		
-		int res = 0; 
-		if(check) {
+		int res = 0; //
+		if(check) { //DB에 수정내용 저장하기
 			res = itemService.updateItemInfo(vo);
 		}
 		
@@ -214,4 +179,32 @@ public class DetailController {
 			vo.setPrice("-");
 		}
 	}	
+	
+	//파일 경로설정 및 vo에 저장하기
+	public void setFilename(ItemVO vo) throws Exception {
+		String currDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));//현재날짜
+		String webPath = "/resources/upload/"; //절대경로
+		String savePath = request.getSession().getServletContext().getRealPath(webPath);//상대경로
+		
+		String filename = "noImage.png";
+		MultipartFile file = vo.getFile();
+		
+		if(!file.isEmpty()) {
+			//업로드된 실제파일명
+			filename = file.getOriginalFilename();
+			File saveFile = new File(savePath+currDate, filename);//파일을 날짜별로 그룹지어 보관하기
+			if(!saveFile.exists()) {//upload폴더가 없으면 생성 
+				saveFile.mkdirs();
+			}else {
+				//파일명 중복방지
+				long time = System.currentTimeMillis();
+				filename = String.format("%d_%s", time, filename);
+				saveFile = new File(savePath+currDate, filename);
+			}
+			//파일을 복사해서 전송하기
+			file.transferTo(saveFile);
+		}
+		vo.setFilename(filename);
+		vo.setFoldername(currDate);
+	}
 }

@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale.Category;
 
 import javax.servlet.http.HttpSession;
 
@@ -37,6 +39,8 @@ public class MainController {
 	
 	ArrayList<UserVO> userList;
 	ArrayList<ItemVO> itemList;
+	List<String> categoryList;
+	static String categoryName;
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
 	//메인페이지로 이동
@@ -59,6 +63,8 @@ public class MainController {
 			itemList.add(itemVO4);
 		}else {//이메일O 목록O
 			itemList = showitemList();	
+			categoryList = itemService.getCategory((String)session.getAttribute("sessionEmail"));
+			model.addAttribute("categoryList", categoryList);
 		}	
 		
 		long dateGap = 0;
@@ -76,11 +82,13 @@ public class MainController {
 				itemList.get(i).setDateGap(dateGap);
 			}
 		}			
-		
+		categoryName = "nothing"; //드랍박스에서 카테고리 선택 안함
 		model.addAttribute("resultGap", resultGap);//유통기한과 현재날짜 차이
 		model.addAttribute("itemList", itemList);
 		model.addAttribute("dbResult", result); //재고유무확인
+		session.setAttribute("categoryName", categoryName);
 		logger.info("==========mainPage==========");
+		System.out.println("categoryName: "+categoryName);
 		
 		return "main";
 	}
@@ -105,6 +113,45 @@ public class MainController {
 		logger.info("==========joinPage==========");
 		return "join";
 	}	
+	
+	//선택한 카테고리 목록 화면에 띄우기
+	@RequestMapping(value="/showCategoryItems")
+	public String showCategoryItems(String category, Model model) {
+		String email = (String)session.getAttribute("sessionEmail");
+		categoryList = itemService.getCategory(email);
+		
+		String allList = "no";
+		
+		int categoryNum=0; //카테고리 목록 중 선택한 카테고리명과 동일한 위치 찾기용 변수
+		if(!category.equals("전체재고")) {
+			for (int i = 0; i < categoryList.size(); i++) {
+				if(categoryList.get(i).equals(category)) {
+					categoryNum = i;
+					categoryName = category;
+				}
+			}			
+		}else {//전체재고 네비바 선택시
+			itemList = itemService.showItemList(email);
+			allList = "yes";
+			categoryName = "everything";
+		}
+		session.setAttribute("categoryName", categoryName);
+		System.out.println("전체목록선택유무: "+allList);
+		System.out.println("categoryName: "+categoryName);
+		
+		//선택한 카테고리명으로 DB조회 후 세부내용 가져오기
+		ItemVO itemVO = new ItemVO();
+		String selectedCategory = categoryList.get(categoryNum);
+		itemVO.setCategory(selectedCategory);
+		itemVO.setEmail(email);
+		List<ItemVO> categoryItems = itemService.showCategoryItems(itemVO); 
+		model.addAttribute("categoryItems", categoryItems);
+		model.addAttribute("categoryList", categoryList);
+		model.addAttribute("itemList", itemList);
+		model.addAttribute("allList", allList);
+		
+		return "main";
+	}
 	
 	//전체회원목록 가져오기
 	public ArrayList<UserVO> showuserList(){
@@ -180,8 +227,7 @@ public class MainController {
 				}
 			}
 		}//for
-		
-		String result = String.format("[{'count':'%s'}]", ""+count);
+		String result = String.format("[{'count':'%d'}]", count);
 		
 		return result;
 	}

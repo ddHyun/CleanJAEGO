@@ -134,6 +134,7 @@
                               <!-- category 파라미터 담기 위한 input태그  -->
                                 <input type="hidden" id="categoryInput" name="categoryInput">
                                 <select name="itemCategory" id="categorySelect">
+                                    <!-- DB에 있는 카테고리 목록 가져오기 -->
                                     <c:forEach var="category" items="${categoryList}">
                                     	<c:choose>
                                     		<c:when test="${category eq itemVO.category}">
@@ -142,7 +143,13 @@
                                     		<c:otherwise><option value="${category}">${category}</option></c:otherwise>
                                     	</c:choose>                                    	
                                     </c:forEach>
-                                    	<c:if test="${empty itemVO.idx}"><option value="noName">기본</option></c:if>
+                                    	<!-- 기존카테고리 목록 있음 && 등록하기 버튼 클릭시  -->
+                                    	<c:if test="${empty itemVO.idx && res ne 0}">
+                                    		<c:forEach var="category1" items="${categoryList1}">
+                                    			<option value="${category1}">${category1}</option>
+                                    		</c:forEach>
+                                    			<option value="noName">기본</option>
+                                    	</c:if>
                                     	<option value="newCategory">[카테고리 추가]</option>
                                 </select>
                               </fieldset>
@@ -294,7 +301,14 @@
 			contentType:false,
 			processData:false
 		}).done(function(data){
-			alert(data);
+			let json = (new Function('return'+data))();
+			if(json[0].result=='0'){
+				alert('수정할 내용이 없습니다.');
+				return false;
+			}else if(json[0].result=='1'){
+				alert('내용이 수정되었습니다.');
+				location.href = 'main';
+			}
 		});
 	});
 	
