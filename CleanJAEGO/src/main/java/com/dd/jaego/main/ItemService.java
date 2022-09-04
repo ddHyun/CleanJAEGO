@@ -52,6 +52,11 @@ public class ItemService {
 	public int updateItemInfo(ItemVO itemVO) {
 		return itemMapper.updateItemInfo(itemVO);
 	}
+
+	//카테고리별 재고목록 가져오기
+	public ArrayList<ItemVO> showCategoryItems(ItemVO itemVO) {
+		return itemMapper.showCategoryItems(itemVO);
+	}
 	
 
 }

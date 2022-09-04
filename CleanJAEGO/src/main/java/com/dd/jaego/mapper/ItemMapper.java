@@ -36,5 +36,9 @@ public interface ItemMapper {
 
 	//제품내용 수정하기
 	public int updateItemInfo(ItemVO itemVO);
+
+	//카테고리별 재고목록 가져오기
+	@Select("select * from jgitem where email=#{email} and category=#{category}")
+	public ArrayList<ItemVO> showCategoryItems(ItemVO itemVO);
 	
 }
