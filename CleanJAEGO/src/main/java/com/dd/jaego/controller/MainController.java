@@ -40,7 +40,7 @@ public class MainController {
 	ArrayList<UserVO> userList;
 	ArrayList<ItemVO> itemList;
 	List<String> categoryList;
-	static String categoryName;
+	static String categoryName = "nothing";
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
 	//메인페이지로 이동
@@ -82,7 +82,6 @@ public class MainController {
 				itemList.get(i).setDateGap(dateGap);
 			}
 		}			
-		categoryName = "nothing"; //드랍박스에서 카테고리 선택 안함
 		model.addAttribute("resultGap", resultGap);//유통기한과 현재날짜 차이
 		model.addAttribute("itemList", itemList);
 		model.addAttribute("dbResult", result); //재고유무확인
@@ -103,7 +102,9 @@ public class MainController {
 	//로그아웃(로그인페이지로 이동)
 	@RequestMapping("/logout")
 	public String logout() {
+		logger.info("==========logout==========");
 		session.invalidate();
+		categoryName = "nothing";
 		return "login";
 	}
 	
@@ -170,7 +171,7 @@ public class MainController {
 		if(email!=null) {
 			int resultNum = itemService.checkItemList(email);
 			result = ""+resultNum;
-			System.out.println(email+" DB재고목록 : "+resultNum);
+			System.out.println("로그인 아이디: "+email+"/ DB재고목록 : "+resultNum);
 		}else {
 			result = "noSession";
 			System.out.println("재고목록유무확인 : "+result);
