@@ -105,7 +105,9 @@
 			 <div class="col-lg-6" style="width:100%">
                     <div class="contact-form">
                         <form id="contact" action="" method="post" enctype="multipart/form-data">
-                        <input type="hidden" value="${itemVO.idx}" name="idx">
+                        <c:if test="${not empty itemVO.idx}">
+                        	<input type="hidden" value="${itemVO.idx}" name="idx">
+                        </c:if>
                           <div class="row">
                             <div class="col-md-6 col-sm-12" align="center">
                             <div>
@@ -123,9 +125,11 @@
 			                            	</c:otherwise>
 			                            </c:choose>
 			                            </c:when>
-		                            	<c:when test="${empty itemVO.idx}">
+		                            	<%-- <c:when test="${empty itemVO.idx}"> --%>
+		                            	<c:otherwise>
 		                            		<img width="50%" height="100%" id="itemImg" />
-		                            	</c:when>
+		                            	</c:otherwise>
+		                            	<%-- </c:when> --%>
 		                            </c:choose>
                             	</a>
                             </div>
@@ -147,13 +151,13 @@
                                     		<c:otherwise><option value="${category}">${category}</option></c:otherwise>
                                     	</c:choose>                                    	
                                     </c:forEach>
-                                    	<!-- 기존카테고리 목록 있음 && 등록하기 버튼 클릭시  -->
-                                    	<c:if test="${empty itemVO.idx && res ne 0}">
-                                    		<c:forEach var="category1" items="${categoryList1}">
-                                    			<option value="${category1}">${category1}</option>
-                                    		</c:forEach>
-                                    			<option value="noName">기본</option>
-                                    	</c:if>
+                                    	<!-- 기존카테고리 목록 없음 && 등록하기 버튼 클릭시  -->
+                                    	<c:choose>
+                                    		
+                                    	<c:when test="${empty itemVO.idx && res eq 0 }">
+                                    		<option value="noName">기본</option>
+                                    	</c:when>
+                                    	</c:choose>
                                     	<option value="newCategory">[카테고리 추가]</option>
                                 </select>
                               </fieldset>
@@ -293,6 +297,20 @@
 	});
 	
 	
+	//선택된 카테고리별 제품 띄우기
+	function showCategoryItems(index) {
+		//카테고리 목록별 아이디에 index부여 후 text 가져오기
+		var category = $('#categoryIdx'+index).text();
+		location.href = 'showCategoryItems?category='+category;
+	}
+	
+	//전체재고 클릭 시 모든제품 목록 띄우기
+	$('#allItems').on('click', function(){
+		var category = $(this).text();
+		location.href = 'showCategoryItems?category='+category;
+	});
+	
+	
 	$('#modifyBtn').click(function(e){
 		validateItem();
 		/* let으로 하면 오류남 */
@@ -331,6 +349,7 @@
 			let json = (new Function('return'+data))();
 			if(json[0].result=='1'){
 				alert('등록되었습니다');
+				location.href = 'main';
 			}
 		});
 	});
@@ -342,11 +361,11 @@
 		
 		let item_nameVal = $.trim($('#nameInput').val());
 		let stockVal = $.trim($('#stockInput').val());
-		/* let manufacture_dateVal = $.trim($('#manufactureDateInput').val());
+		let manufacture_dateVal = $.trim($('#manufactureDateInput').val());
 		let expiry_dateVal = $.trim($('#expiryDateInput').val());
 		let priceVal = $.trim($('#priceInput').val());		
 		let storeVal = $.trim($('#storeInput').val());
-		let memoVal = $.trim($('#memoText').val()); */
+		let memoVal = $.trim($('#memoText').val());
 		
 		if(item_nameVal==''){
 			alert('제품명을 입력해주세요');

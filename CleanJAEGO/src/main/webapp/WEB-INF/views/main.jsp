@@ -20,6 +20,14 @@
 <link href="resources/css/styles.css" rel="stylesheet" />
 </head>
 <style>
+.categoryTitle{
+	color: #cf565c;
+	font-weight: bold;
+	font-size: 2rem;
+	display: block;
+	text-align: center;
+	margin-bottom: 1rem;
+}
 @media (min-width: 576px) {
   img{
   	height: 154.66px;
@@ -96,21 +104,22 @@
         <!-- Section-->       
         <section class="py-5" style="background-color:#cfffe5">
             <div class="container px-4 px-lg-5 mt-5">
-        	<h3>
+        	<span class="categoryTitle">
         	<c:choose>
         		<c:when test="${sessionScope.categoryName ne 'nothing' && sessionScope.categoryName ne 'everything' }">
         			[${sessionScope.categoryName}]
         		</c:when>
         		<c:otherwise>[전체재고]</c:otherwise>
         	</c:choose> 
-        	</h3>   
+        	</span>   
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 
 		<!----------------------------------- 로그인 되어있으면서 저장된 재고목록도 있는 경우 ----------------------------------->           		                     
+                   <!-- 카테고리 드랍박스에서 카테고리를 선택했을 경우 categoryItems에 목록, 선택안함(nothing)이나 전체선택(everything)시 itemList에 목록 저장 -->
                    <c:choose>
                    <c:when test="${sessionEmail ne null && dbResult ne '0' && dbResult ne 'noSession' }">
                    <c:choose>
-                   <c:when test="${allList eq 'no'}">
+                   <c:when test="${sessionScope.categoryName ne 'nothing' && sessionScope.categoryName ne 'everything'}">
                   <c:forEach var="item" items="${categoryItems}" varStatus="status">
                     <div class="col mb-5">
                         <div class="card h-100">
@@ -160,7 +169,8 @@
                     </div>
                    </c:forEach>
                    </c:when>
-                   <%-- <c:when test="${allList eq 'yes' && sessionScope.categoryName eq 'nothing' || sessionScope.categoryName eq 'everything'}">
+                   
+                   <c:otherwise>
                   <c:forEach var="item" items="${itemList}" varStatus="status">
                     <div class="col mb-5">
                         <div class="card h-100">
@@ -209,7 +219,7 @@
                         </div>
                     </div>
                    </c:forEach>
-                   </c:when> --%>
+                   </c:otherwise>
                    </c:choose>
 
                    <!-- 기존목록 열거 후 등록하기 section -->
@@ -354,7 +364,6 @@
 	function showCategoryItems(index) {
 		//카테고리 목록별 아이디에 index부여 후 text 가져오기
 		var category = $('#categoryIdx'+index).text();
-		
 		location.href = 'showCategoryItems?category='+category;
 	}
 	

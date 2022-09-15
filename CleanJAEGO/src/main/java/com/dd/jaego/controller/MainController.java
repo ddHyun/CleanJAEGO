@@ -39,7 +39,8 @@ public class MainController {
 	
 	ArrayList<UserVO> userList;
 	ArrayList<ItemVO> itemList;
-	List<String> categoryList;
+	List<String> categoryList; //카테고리명 모음
+	List<ItemVO> categoryItems; //선택된 카테고리별 제품 모음
 	static String categoryName = "nothing";
 	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	
@@ -62,7 +63,11 @@ public class MainController {
 			itemList.add(itemVO3);
 			itemList.add(itemVO4);
 		}else {//이메일O 목록O
-			itemList = showitemList();	
+			if(categoryName.equals("nothing")|| categoryName.equals("everything")) {
+				itemList = showitemList();	
+			}else {
+				 categoryItems = showCategoryItems(categoryName);
+			}
 			categoryList = itemService.getCategory((String)session.getAttribute("sessionEmail"));
 			model.addAttribute("categoryList", categoryList);
 		}	
@@ -81,13 +86,16 @@ public class MainController {
 				dateGap = 100000000;
 				itemList.get(i).setDateGap(dateGap);
 			}
-		}			
+		}
+		
+		System.out.println("dateGap : "+dateGap+", resultGap : "+resultGap);
+		
 		model.addAttribute("resultGap", resultGap);//유통기한과 현재날짜 차이
 		model.addAttribute("itemList", itemList);
 		model.addAttribute("dbResult", result); //재고유무확인
+		model.addAttribute("categoryItems", categoryItems);
 		session.setAttribute("categoryName", categoryName);
 		logger.info("==========mainPage==========");
-		System.out.println("categoryName: "+categoryName);
 		
 		return "main";
 	}
@@ -118,10 +126,19 @@ public class MainController {
 	//선택한 카테고리 목록 화면에 띄우기
 	@RequestMapping(value="/showCategoryItems")
 	public String showCategoryItems(String category, Model model) {
+
+		List<ItemVO> categoryItems = showCategoryItems(category);
+		model.addAttribute("categoryItems", categoryItems);
+		model.addAttribute("categoryList", categoryList);
+		model.addAttribute("itemList", itemList);
+		
+		return "main";
+	}
+	
+	//카테고리별 제품정보 가져오기
+	public List<ItemVO> showCategoryItems(String category){
 		String email = (String)session.getAttribute("sessionEmail");
 		categoryList = itemService.getCategory(email);
-		
-		String allList = "no";
 		
 		int categoryNum=0; //카테고리 목록 중 선택한 카테고리명과 동일한 위치 찾기용 변수
 		if(!category.equals("전체재고")) {
@@ -133,11 +150,9 @@ public class MainController {
 			}			
 		}else {//전체재고 네비바 선택시
 			itemList = itemService.showItemList(email);
-			allList = "yes";
 			categoryName = "everything";
 		}
 		session.setAttribute("categoryName", categoryName);
-		System.out.println("전체목록선택유무: "+allList);
 		System.out.println("categoryName: "+categoryName);
 		
 		//선택한 카테고리명으로 DB조회 후 세부내용 가져오기
@@ -146,12 +161,8 @@ public class MainController {
 		itemVO.setCategory(selectedCategory);
 		itemVO.setEmail(email);
 		List<ItemVO> categoryItems = itemService.showCategoryItems(itemVO); 
-		model.addAttribute("categoryItems", categoryItems);
-		model.addAttribute("categoryList", categoryList);
-		model.addAttribute("itemList", itemList);
-		model.addAttribute("allList", allList);
 		
-		return "main";
+		return categoryItems;
 	}
 	
 	//전체회원목록 가져오기
