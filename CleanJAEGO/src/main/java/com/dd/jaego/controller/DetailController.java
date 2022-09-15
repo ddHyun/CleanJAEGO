@@ -51,8 +51,8 @@ public class DetailController {
 		if(res!=0) { //등록하기 페이지 내 기존 카테고리 목록이 있다면 불러오기
 			List<String> categoryList1 = itemService.getCategory(email);
 			model.addAttribute("categoryList", categoryList1);
-			model.addAttribute("res", res);
 		}
+		model.addAttribute("res", res);
 		return "detail";
 	}
 	
