@@ -33,17 +33,17 @@
           <tr>
             <th>Language</th>
             <td>
-              <code>Java</code>
+              <code>Java 1.8.0</code>
               <code>JavaScript</code>
             </td>
           </tr>
           <tr>
             <th>IDE</th>
-            <td><code>Eclipse</code></td>
+            <td><code>Eclipse 4.15.0(2020-03)</code></td>
           </tr>
           <tr>
             <th>Framework</th>
-            <td><code>Spring Framework</code></td>
+            <td><code>Spring Framework 3.1.1</code></td>
           </tr>
           <tr>
             <th>Build Tool</th>
@@ -55,7 +55,7 @@
           </tr>
           <tr>
             <th>WAS</th>
-            <td><code>Apache Tomcat</code></td>
+            <td><code>Apache Tomcat 8.5.73</code></td>
           </tr>
           <tr>
             <th>보조툴</th>
