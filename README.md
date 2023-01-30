@@ -13,6 +13,7 @@
       <li>구조도</li>
       <img src="https://user-images.githubusercontent.com/107980962/215374376-d2c981c3-f406-4e8c-b2c0-65ee985c0fb3.png">
       <li>ERD</li>
+      <img src="https://user-images.githubusercontent.com/107980962/215386300-4c2e416c-3f83-46b7-b2ec-7ee4feef272e.png">
     </ul>
   </li>
   <li>진행 프로세스
