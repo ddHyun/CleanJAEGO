@@ -35,6 +35,7 @@
             <td>
               <code>Java 1.6</code>
               <code>JavaScript</code>
+              <code>JQuery</code>
             </td>
           </tr>
           <tr>
