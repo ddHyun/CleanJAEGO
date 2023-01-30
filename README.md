@@ -38,24 +38,31 @@
             </td>
           </tr>
           <tr>
-            <th>Framework</th>
-            <td><code>Spring</code></td>
-          </tr>
-          <tr>
-            <th>Build Tool</th>
+            <th>IDE</th>
             <td><code>Eclipse</code></td>
           </tr>
           <tr>
-            <th>DBMS</th>
-            <td><code>Oracle DB</code></td>
+            <th>Framework</th>
+            <td><code>Spring Framework</code></td>
           </tr>
           <tr>
-            <th>Server</th>
+            <th>Build Tool</th>
+            <td><code>Maven</code></td>
+          </tr>
+          <tr>
+            <th>DBMS</th>
+            <td><code>Oracle</code></td>
+          </tr>
+          <tr>
+            <th>WAS</th>
             <td><code>Apache Tomcat</code></td>
           </tr>
           <tr>
             <th>보조툴</th>
-            <td><code>Github</code></td>
+            <td>
+              <code>Github</code>
+              <code>DBeaver</code>
+            </td>
           </tr>
         </table>
     </ul>
