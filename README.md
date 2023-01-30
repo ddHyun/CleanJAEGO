@@ -13,13 +13,51 @@
       <li>구조도</li>
       <img src="https://user-images.githubusercontent.com/107980962/215374376-d2c981c3-f406-4e8c-b2c0-65ee985c0fb3.png">
       <li>ERD</li>
-      <img src="https://user-images.githubusercontent.com/107980962/215386300-4c2e416c-3f83-46b7-b2ec-7ee4feef272e.png">
+      <img style="height: 250px;" src="https://user-images.githubusercontent.com/107980962/215386300-4c2e416c-3f83-46b7-b2ec-7ee4feef272e.png">
     </ul>
   </li>
   <li>진행 프로세스
     <ul>
       <li>개발일정</li>
+        <ul>
+          <li>2022.08.14 ~ 2022.09.08 (총25일)</li>
+          <li>세부일정</li>
+            <ul>
+              <li>8/14 : 브레인스토밍 & 기획</li>
+              <li>~9/5 : Front&Back-end (UI, 페이지별 기능 구현)</li>
+              <li>~9/8 : 수정 및 개선</li>
+            </ul>
+        </ul>
       <li>개발환경</li>
+        <table>
+          <tr>
+            <th>Language</th>
+            <td>
+              <code>Java</code>
+              <code>JavaScript</code>
+            </td>
+          </tr>
+          <tr>
+            <th>Framework</th>
+            <td><code>Spring</code></td>
+          </tr>
+          <tr>
+            <th>Build Tool</th>
+            <td><code>Eclipse</code></td>
+          </tr>
+          <tr>
+            <th>DBMS</th>
+            <td><code>Oracle DB</code></td>
+          </tr>
+          <tr>
+            <th>Server</th>
+            <td><code>Apache Tomcat</code></td>
+          </tr>
+          <tr>
+            <th>보조툴</th>
+            <td><code>Github</code></td>
+          </tr>
+        </table>
     </ul>
   </li>
 </ul>
