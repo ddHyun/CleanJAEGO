@@ -33,7 +33,7 @@
           <tr>
             <th>Language</th>
             <td>
-              <code>Java 1.8.0</code>
+              <code>Java 1.6</code>
               <code>JavaScript</code>
             </td>
           </tr>
