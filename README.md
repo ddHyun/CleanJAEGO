@@ -11,7 +11,7 @@
   <li>프로젝트 상세
     <ul>
       <li>구조도</li>
-      ![image](https://user-images.githubusercontent.com/107980962/215374376-d2c981c3-f406-4e8c-b2c0-65ee985c0fb3.png)
+      <img src="https://user-images.githubusercontent.com/107980962/215374376-d2c981c3-f406-4e8c-b2c0-65ee985c0fb3.png">
       <li>ERD</li>
     </ul>
   </li>
