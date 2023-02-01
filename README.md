@@ -14,6 +14,10 @@
       <img src="https://user-images.githubusercontent.com/107980962/215374376-d2c981c3-f406-4e8c-b2c0-65ee985c0fb3.png">
       <li>ERD</li>
       <img style="height: 250px;" src="https://user-images.githubusercontent.com/107980962/215386300-4c2e416c-3f83-46b7-b2ec-7ee4feef272e.png">
+      <li>동영상</li>
+      https://user-images.githubusercontent.com/107980962/215964982-0be309c9-92da-4ba5-8c73-1356ce276e2b.mp4<br>      
+      https://user-images.githubusercontent.com/107980962/215965545-41878e27-f7bc-49f0-96d7-f7f8c41c48b0.mp4<br>      
+      https://user-images.githubusercontent.com/107980962/215965573-de8bbdf7-0310-452a-991d-77e3c92d09d0.mp4<br>
     </ul>
   </li>
   <li>진행 프로세스
