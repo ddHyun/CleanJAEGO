@@ -1,6 +1,6 @@
 # CleanJAEGO(클린재고)
 <img src="https://user-images.githubusercontent.com/107980962/213481807-bb2b2ed2-ccc2-430e-96ba-dfc23476df9a.png">
-<h2>가정용/개인용 재고관리 프로젝트</h2>
+<h2>가정용/개인용 재고관리 개인프로젝트</h2>
 <ul>  
   <li>프로젝트 개요
     <ul>
