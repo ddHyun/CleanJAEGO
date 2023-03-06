@@ -85,6 +85,4 @@
         </table>
     </ul>
   </li>
-  <li>프로젝트 PPT</li>
-  [CleanJAEGO.pptx](https://github.com/ddHyun/CleanJAEGO/files/10574987/CleanJAEGO.pptx)
 </ul>
